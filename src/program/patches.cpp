@@ -26,11 +26,9 @@ HOOK_DEFINE_INLINE(Dash_Speed) {
 
 HOOK_DEFINE_INLINE(Dash_VelocityClamp) {
   static void Callback(exl::hook::InlineCtx *ctx) {
-    auto before = ctx->W[8];
     if (PATCH_CONFIG.dash_enabled) {
       ctx->W[8] = 0;
     }
-    Logger::log("Dash_VelocityClamp, %d, %d\n", before, ctx->W[8]);
   }
 };
 
