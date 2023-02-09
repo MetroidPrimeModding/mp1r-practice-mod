@@ -3,20 +3,20 @@
 #include "logger/Logger.hpp"
 
 static const char *styleNames[] = {
-        "Pro Controller",
-        "Joy-Con controller in handheld mode",
-        "Joy-Con controller in dual mode",
-        "Joy-Con left controller in single mode",
-        "Joy-Con right controller in single mode",
-        "GameCube controller",
-        "Poké Ball Plus controller",
-        "NES/Famicom controller",
-        "NES/Famicom controller in handheld mode",
-        "SNES controller",
-        "N64 controller",
-        "Sega Genesis controller",
-        "generic external controller",
-        "generic controller",
+    "Pro Controller",
+    "Joy-Con controller in handheld mode",
+    "Joy-Con controller in dual mode",
+    "Joy-Con left controller in single mode",
+    "Joy-Con right controller in single mode",
+    "GameCube controller",
+    "Poké Ball Plus controller",
+    "NES/Famicom controller",
+    "NES/Famicom controller in handheld mode",
+    "SNES controller",
+    "N64 controller",
+    "Sega Genesis controller",
+    "generic external controller",
+    "generic controller",
 };
 
 nn::hid::NpadBaseState InputHelper::prevControllerState{};
@@ -34,118 +34,118 @@ bool InputHelper::toggleInput = false;
 
 const char *getStyleName(nn::hid::NpadStyleSet style) {
 
-    u32 index = -1u;
+  u32 index = -1u;
 
-    if (style.isBitSet(nn::hid::NpadStyleTag::NpadStyleFullKey)) { index = 0; }
-    if (style.isBitSet(nn::hid::NpadStyleTag::NpadStyleHandheld)) { index = 1; }
-    if (style.isBitSet(nn::hid::NpadStyleTag::NpadStyleJoyDual)) { index = 2; }
-    if (style.isBitSet(nn::hid::NpadStyleTag::NpadStyleJoyLeft)) { index = 3; }
-    if (style.isBitSet(nn::hid::NpadStyleTag::NpadStyleJoyRight)) { index = 4; }
-    if (style.isBitSet(nn::hid::NpadStyleTag::NpadStyleGc)) { index = 5; }
-    if (style.isBitSet(nn::hid::NpadStyleTag::NpadStylePalma)) { index = 6; }
-    if (style.isBitSet(nn::hid::NpadStyleTag::NpadStyleLark)) { index = 7; }
-    if (style.isBitSet(nn::hid::NpadStyleTag::NpadStyleHandheldLark)) { index = 8; }
-    if (style.isBitSet(nn::hid::NpadStyleTag::NpadStyleLucia)) { index = 9; }
-    if (style.isBitSet(nn::hid::NpadStyleTag::NpadStyleLagon)) { index = 10; }
-    if (style.isBitSet(nn::hid::NpadStyleTag::NpadStyleLager)) { index = 11; }
-    if (style.isBitSet(nn::hid::NpadStyleTag::NpadStyleSystemExt)) { index = 12; }
-    if (style.isBitSet(nn::hid::NpadStyleTag::NpadStyleSystem)) { index = 13; }
+  if (style.isBitSet(nn::hid::NpadStyleTag::NpadStyleFullKey)) { index = 0; }
+  if (style.isBitSet(nn::hid::NpadStyleTag::NpadStyleHandheld)) { index = 1; }
+  if (style.isBitSet(nn::hid::NpadStyleTag::NpadStyleJoyDual)) { index = 2; }
+  if (style.isBitSet(nn::hid::NpadStyleTag::NpadStyleJoyLeft)) { index = 3; }
+  if (style.isBitSet(nn::hid::NpadStyleTag::NpadStyleJoyRight)) { index = 4; }
+  if (style.isBitSet(nn::hid::NpadStyleTag::NpadStyleGc)) { index = 5; }
+  if (style.isBitSet(nn::hid::NpadStyleTag::NpadStylePalma)) { index = 6; }
+  if (style.isBitSet(nn::hid::NpadStyleTag::NpadStyleLark)) { index = 7; }
+  if (style.isBitSet(nn::hid::NpadStyleTag::NpadStyleHandheldLark)) { index = 8; }
+  if (style.isBitSet(nn::hid::NpadStyleTag::NpadStyleLucia)) { index = 9; }
+  if (style.isBitSet(nn::hid::NpadStyleTag::NpadStyleLagon)) { index = 10; }
+  if (style.isBitSet(nn::hid::NpadStyleTag::NpadStyleLager)) { index = 11; }
+  if (style.isBitSet(nn::hid::NpadStyleTag::NpadStyleSystemExt)) { index = 12; }
+  if (style.isBitSet(nn::hid::NpadStyleTag::NpadStyleSystem)) { index = 13; }
 
-    if (index != -1u) {
-        return styleNames[index];
-    } else {
-        return "Unknown";
-    }
+  if (index != -1u) {
+    return styleNames[index];
+  } else {
+    return "Unknown";
+  }
 }
 
 void InputHelper::initKBM() {
-    nn::hid::InitializeKeyboard();
-    nn::hid::InitializeMouse();
+  nn::hid::InitializeKeyboard();
+  nn::hid::InitializeMouse();
 }
 
 void InputHelper::updatePadState() {
-    prevControllerState = curControllerState;
-    tryGetContState(&curControllerState, selectedPort);
+  prevControllerState = curControllerState;
+  tryGetContState(&curControllerState, selectedPort);
 
-    prevKeyboardState = curKeyboardState;
-    nn::hid::GetKeyboardState(&curKeyboardState);
+  prevKeyboardState = curKeyboardState;
+  nn::hid::GetKeyboardState(&curKeyboardState);
 
-    prevMouseState = curMouseState;
-    nn::hid::GetMouseState(&curMouseState);
+  prevMouseState = curMouseState;
+  nn::hid::GetMouseState(&curMouseState);
 
-    if ((isHoldLeftStick() && isPressRightStick()) || (isHoldRightStick() && isPressLeftStick())) {
-        toggleInput = !toggleInput;
-    }
+  if ((isHoldLeftStick() && isPressRightStick()) || (isHoldRightStick() && isPressLeftStick())) {
+    toggleInput = !toggleInput;
+  }
 }
 
 bool InputHelper::tryGetContState(nn::hid::NpadBaseState *state, ulong port) {
 
-    nn::hid::NpadStyleSet styleSet = nn::hid::GetNpadStyleSet(port);
-    isReadInput = true;
-    bool result = true;
+  nn::hid::NpadStyleSet styleSet = nn::hid::GetNpadStyleSet(port);
+  isReadInput = true;
+  bool result = true;
 
-    if (styleSet.isBitSet(nn::hid::NpadStyleTag::NpadStyleFullKey)) {
-        nn::hid::GetNpadState((nn::hid::NpadFullKeyState *) state, port);
-    } else if (styleSet.isBitSet(nn::hid::NpadStyleTag::NpadStyleHandheld)) {
-        nn::hid::GetNpadState((nn::hid::NpadHandheldState *) state, port);
-    } else if (styleSet.isBitSet(nn::hid::NpadStyleTag::NpadStyleJoyDual)) {
-        nn::hid::GetNpadState((nn::hid::NpadJoyDualState *) state, port);
-    } else if (styleSet.isBitSet(nn::hid::NpadStyleTag::NpadStyleJoyLeft)) {
-        nn::hid::GetNpadState((nn::hid::NpadJoyLeftState *) state, port);
-    } else if (styleSet.isBitSet(nn::hid::NpadStyleTag::NpadStyleJoyRight)) {
-        nn::hid::GetNpadState((nn::hid::NpadJoyRightState *) state, port);
-    } else {
-        result = false;
-    }
+  if (styleSet.isBitSet(nn::hid::NpadStyleTag::NpadStyleFullKey)) {
+    nn::hid::GetNpadState((nn::hid::NpadFullKeyState *) state, port);
+  } else if (styleSet.isBitSet(nn::hid::NpadStyleTag::NpadStyleHandheld)) {
+    nn::hid::GetNpadState((nn::hid::NpadHandheldState *) state, port);
+  } else if (styleSet.isBitSet(nn::hid::NpadStyleTag::NpadStyleJoyDual)) {
+    nn::hid::GetNpadState((nn::hid::NpadJoyDualState *) state, port);
+  } else if (styleSet.isBitSet(nn::hid::NpadStyleTag::NpadStyleJoyLeft)) {
+    nn::hid::GetNpadState((nn::hid::NpadJoyLeftState *) state, port);
+  } else if (styleSet.isBitSet(nn::hid::NpadStyleTag::NpadStyleJoyRight)) {
+    nn::hid::GetNpadState((nn::hid::NpadJoyRightState *) state, port);
+  } else {
+    result = false;
+  }
 
-    isReadInput = false;
+  isReadInput = false;
 
-    return result;
+  return result;
 
 }
 
 bool InputHelper::isButtonHold(nn::hid::NpadButton button) {
-    return curControllerState.mButtons.isBitSet(button);
+  return curControllerState.mButtons.isBitSet(button);
 }
 
 bool InputHelper::isButtonPress(nn::hid::NpadButton button) {
-    return curControllerState.mButtons.isBitSet(button) && !prevControllerState.mButtons.isBitSet(button);
+  return curControllerState.mButtons.isBitSet(button) && !prevControllerState.mButtons.isBitSet(button);
 }
 
 bool InputHelper::isButtonRelease(nn::hid::NpadButton button) {
-    return !curControllerState.mButtons.isBitSet(button) && prevControllerState.mButtons.isBitSet(button);
+  return !curControllerState.mButtons.isBitSet(button) && prevControllerState.mButtons.isBitSet(button);
 }
 
 bool InputHelper::isKeyHold(nn::hid::KeyboardKey key) {
-    return curKeyboardState.keys.isBitSet(key);
+  return curKeyboardState.keys.isBitSet(key);
 }
 
 bool InputHelper::isKeyPress(nn::hid::KeyboardKey key) {
-    return curKeyboardState.keys.isBitSet(key) && !prevKeyboardState.keys.isBitSet(key);
+  return curKeyboardState.keys.isBitSet(key) && !prevKeyboardState.keys.isBitSet(key);
 }
 
 bool InputHelper::isKeyRelease(nn::hid::KeyboardKey key) {
-    return !curKeyboardState.keys.isBitSet(key) && prevKeyboardState.keys.isBitSet(key);
+  return !curKeyboardState.keys.isBitSet(key) && prevKeyboardState.keys.isBitSet(key);
 }
 
 bool InputHelper::isMouseHold(nn::hid::MouseButton button) {
-    return curMouseState.buttons.isBitSet(button);
+  return curMouseState.buttons.isBitSet(button);
 }
 
 bool InputHelper::isMousePress(nn::hid::MouseButton button) {
-    return curMouseState.buttons.isBitSet(button) && !prevMouseState.buttons.isBitSet(button);
+  return curMouseState.buttons.isBitSet(button) && !prevMouseState.buttons.isBitSet(button);
 }
 
 bool InputHelper::isMouseRelease(nn::hid::MouseButton button) {
-    return !curMouseState.buttons.isBitSet(button) && prevMouseState.buttons.isBitSet(button);
+  return !curMouseState.buttons.isBitSet(button) && prevMouseState.buttons.isBitSet(button);
 }
 
 void InputHelper::getMouseCoords(float *x, float *y) {
-    *x = curMouseState.x;
-    *y = curMouseState.y;
+  *x = curMouseState.x;
+  *y = curMouseState.y;
 }
 
 void InputHelper::getScrollDelta(float *x, float *y) {
-    *x = curMouseState.wheelDeltaX;
-    *y = curMouseState.wheelDeltaY;
+  *x = curMouseState.wheelDeltaX;
+  *y = curMouseState.wheelDeltaY;
 }

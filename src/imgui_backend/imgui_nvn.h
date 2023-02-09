@@ -8,13 +8,13 @@ FuncBody                                                                    \
 
 namespace nvnImGui {
 
-    typedef void (*ProcDrawFunc)();
+  typedef void (*ProcDrawFunc)();
 
-    void InstallHooks();
+  void InstallHooks();
 
-    bool InitImGui();
+  bool InitImGui();
 
-    void procDraw();
+  void procDraw();
 
-    void addDrawFunc(ProcDrawFunc func);
+  void addDrawFunc(ProcDrawFunc func);
 }

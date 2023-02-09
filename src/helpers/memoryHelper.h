@@ -4,11 +4,11 @@
 
 
 namespace MemoryHelper {
-    template<class T>
-    void logMemory(T *ptr);
+  template<class T>
+  void logMemory(T *ptr);
 
-    void logMemory(void *ptr, size_t size);
+  void logMemory(void *ptr, size_t size);
 
-    void logBytes(void *ptr, size_t size);
+  void logBytes(void *ptr, size_t size);
 }
 

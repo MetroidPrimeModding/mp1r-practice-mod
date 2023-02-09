@@ -15,100 +15,100 @@
 
 namespace ImguiNvnBackend {
 
-    static constexpr int MaxTexDescriptors = 256 + 100;
-    static constexpr int MaxSampDescriptors = 256 + 100;
+  static constexpr int MaxTexDescriptors = 256 + 100;
+  static constexpr int MaxSampDescriptors = 256 + 100;
 
-    struct NvnBackendInitInfo {
-        nvn::Device *device;
-        nvn::Queue *queue;
-        nvn::CommandBuffer *cmdBuf;
-    };
+  struct NvnBackendInitInfo {
+    nvn::Device *device;
+    nvn::Queue *queue;
+    nvn::CommandBuffer *cmdBuf;
+  };
 
-    struct NvnBackendData {
+  struct NvnBackendData {
 
-        // general data
+    // general data
 
-        nvn::Device *device;
-        nvn::Queue *queue;
-        nvn::CommandBuffer *cmdBuf;
+    nvn::Device *device;
+    nvn::Queue *queue;
+    nvn::CommandBuffer *cmdBuf;
 
-        // builders
+    // builders
 
-        nvn::BufferBuilder bufferBuilder;
-        nvn::MemoryPoolBuilder memPoolBuilder;
-        nvn::TextureBuilder texBuilder;
-        nvn::SamplerBuilder samplerBuilder;
+    nvn::BufferBuilder bufferBuilder;
+    nvn::MemoryPoolBuilder memPoolBuilder;
+    nvn::TextureBuilder texBuilder;
+    nvn::SamplerBuilder samplerBuilder;
 
-        // shader data
+    // shader data
 
-        nvn::Program shaderProgram;
+    nvn::Program shaderProgram;
 
-        MemoryBuffer *shaderMemory;
-        MemoryBuffer *uniformMemory;
+    MemoryBuffer *shaderMemory;
+    MemoryBuffer *uniformMemory;
 
-        nvn::ShaderData shaderDatas[2]; // 0 - Vert 1 - Frag
+    nvn::ShaderData shaderDatas[2]; // 0 - Vert 1 - Frag
 
-        nvn::VertexStreamState streamState;
-        nvn::VertexAttribState attribStates[3];
+    nvn::VertexStreamState streamState;
+    nvn::VertexAttribState attribStates[3];
 
-        // font data
+    // font data
 
-        nvn::TexturePool texPool;
-        nvn::SamplerPool samplerPool;
+    nvn::TexturePool texPool;
+    nvn::SamplerPool samplerPool;
 
-        nvn::MemoryPool sampTexMemPool;
+    nvn::MemoryPool sampTexMemPool;
 
-        nvn::MemoryPool fontMemPool;
+    nvn::MemoryPool fontMemPool;
 
-        int samplerId;
-        nvn::Sampler fontSampler;
-        int textureId;
-        nvn::Texture fontTexture;
+    int samplerId;
+    nvn::Sampler fontSampler;
+    int textureId;
+    nvn::Texture fontTexture;
 
-        nvn::TextureHandle fontTexHandle;
+    nvn::TextureHandle fontTexHandle;
 
-        // render data
+    // render data
 
-        MemoryBuffer *vtxBuffer;
-        MemoryBuffer *idxBuffer;
+    MemoryBuffer *vtxBuffer;
+    MemoryBuffer *idxBuffer;
 
-        // misc data
+    // misc data
 
-        nn::TimeSpanType lastTick;
-        bool isInitialized;
+    nn::TimeSpanType lastTick;
+    bool isInitialized;
 
-        bool isDisableInput = true;
+    bool isDisableInput = true;
 
-        CompiledData imguiShaderBinary;
+    CompiledData imguiShaderBinary;
 
-        // test shader data
+    // test shader data
 
-        bool isUseTestShader = false;
-        nvn::Program testShader;
-        nvn::ShaderData testShaderDatas[2]; // 0 - Vert 1 - Frag
-        MemoryBuffer *testShaderBuffer;
-        CompiledData testShaderBinary;
-    };
+    bool isUseTestShader = false;
+    nvn::Program testShader;
+    nvn::ShaderData testShaderDatas[2]; // 0 - Vert 1 - Frag
+    MemoryBuffer *testShaderBuffer;
+    CompiledData testShaderBinary;
+  };
 
-    bool createShaders();
+  bool createShaders();
 
-    bool setupShaders(u8 *shaderBinary, ulong binarySize);
+  bool setupShaders(u8 *shaderBinary, ulong binarySize);
 
-    bool setupFont();
+  bool setupFont();
 
-    void InitBackend(const NvnBackendInitInfo &initInfo);
+  void InitBackend(const NvnBackendInitInfo &initInfo);
 
-    void ShutdownBackend();
+  void ShutdownBackend();
 
-    void updateInput();
+  void updateInput();
 
-    void newFrame();
+  void newFrame();
 
-    void setRenderStates();
+  void setRenderStates();
 
-    void renderDrawData(ImDrawData *drawData);
+  void renderDrawData(ImDrawData *drawData);
 
-    NvnBackendData *getBackendData();
+  NvnBackendData *getBackendData();
 }; // namespace ImguiNvnBackend
 
 #endif

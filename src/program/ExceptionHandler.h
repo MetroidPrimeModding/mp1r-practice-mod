@@ -15,6 +15,6 @@ void printTraceEntry(const char *traceName, ulong addr, nn::diag::ModuleInfo *mo
 void installExceptionStub();
 
 struct stack_frame {
-    stack_frame* prevFp;
-    size_t lr;
+  stack_frame *prevFp;
+  size_t lr;
 };

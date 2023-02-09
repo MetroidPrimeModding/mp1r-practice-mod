@@ -8,4 +8,4 @@ struct PatchConfig {
 
 extern PatchConfig PATCH_CONFIG;
 
-void runCodePatches(); 
+void runCodePatches();
