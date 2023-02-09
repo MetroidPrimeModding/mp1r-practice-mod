@@ -33,7 +33,7 @@ bool InputHelper::toggleInput = true;
 
 const char *getStyleName(nn::hid::NpadStyleSet style) {
 
-    u32 index = -1;
+    u32 index = -1u;
 
     if (style.isBitSet(nn::hid::NpadStyleTag::NpadStyleFullKey)) { index = 0; }
     if (style.isBitSet(nn::hid::NpadStyleTag::NpadStyleHandheld)) { index = 1; }
@@ -50,7 +50,7 @@ const char *getStyleName(nn::hid::NpadStyleSet style) {
     if (style.isBitSet(nn::hid::NpadStyleTag::NpadStyleSystemExt)) { index = 12; }
     if (style.isBitSet(nn::hid::NpadStyleTag::NpadStyleSystem)) { index = 13; }
 
-    if (index != -1) {
+    if (index != -1u) {
         return styleNames[index];
     } else {
         return "Unknown";

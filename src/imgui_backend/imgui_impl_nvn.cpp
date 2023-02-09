@@ -646,7 +646,7 @@ namespace ImguiNvnBackend {
         nvn::TextureHandle boundTextureHandle = 0;
 
         // load data into buffers, and process draw commands
-        for (size_t i = 0; i < drawData->CmdListsCount; i++) {
+        for (int i = 0; i < drawData->CmdListsCount; i++) {
 
             auto cmdList = drawData->CmdLists[i];
 

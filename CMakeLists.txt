@@ -20,17 +20,23 @@ add_compile_definitions(EXL_PROGRAM_ID=${CONFIG_TITLE_ID} IMGUI_USER_CONFIG="img
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/module/subsdk9.json.template ${CMAKE_CURRENT_BINARY_DIR}/subsdk9.json)
 
 ## Project sources
-include_directories(${PROJECT_SOURCE_DIR}/src/lib)
-include_directories(${PROJECT_SOURCE_DIR}/src/nvn)
-include_directories(${PROJECT_SOURCE_DIR}/src/nn)
-include_directories(${PROJECT_SOURCE_DIR}/src/program)
+include_directories(src_framework/lib)
+include_directories(src_framework/nvn)
+include_directories(src_framework/nn)
+include_directories(src_framework/)
 
 include_directories(${PROJECT_SOURCE_DIR}/src)
 include_directories(${PROJECT_SOURCE_DIR}/extern/imgui)
 
 file(GLOB_RECURSE SOURCES_ASM ${PROJECT_SOURCE_DIR}/src/*.s)
-file(GLOB_RECURSE SOURCES_H ${PROJECT_SOURCE_DIR}/src/*.h ${PROJECT_SOURCE_DIR}/src/*.hpp)
-file(GLOB_RECURSE SOURCES_CXX ${PROJECT_SOURCE_DIR}/src/*.cpp ${PROJECT_SOURCE_DIR}/src/*.c)
+file(GLOB_RECURSE SOURCES_H
+        ${PROJECT_SOURCE_DIR}/src/*.h ${PROJECT_SOURCE_DIR}/src/*.hpp
+        ${PROJECT_SOURCE_DIR}/src_framework/*.h ${PROJECT_SOURCE_DIR}/src_framework/*.hpp
+        )
+file(GLOB_RECURSE SOURCES_CXX
+        ${PROJECT_SOURCE_DIR}/src/*.cpp ${PROJECT_SOURCE_DIR}/src/*.c
+        ${PROJECT_SOURCE_DIR}/src_framework/*.cpp ${PROJECT_SOURCE_DIR}/src_framework/*.c
+        )
 file(GLOB IMGUI_SOURCES extern/imgui/*.cpp)
 file(GLOB_RECURSE LOCAL_LIBRARIES ${PROJECT_SOURCE_DIR}/libs/*.a)
 

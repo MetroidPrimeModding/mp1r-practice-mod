@@ -14,7 +14,7 @@ namespace MemoryHelper {
 
     void logMemory(void *ptr, size_t size) {
         auto all = (unsigned char *) ptr;
-        for (int i = 0; i < size; i++) {
+        for (size_t i = 0; i < size; i++) {
             Logger::log("%02X", all[i]);
         }
         Logger::log("\n");
@@ -23,9 +23,9 @@ namespace MemoryHelper {
     void logBytes(void *ptr, size_t size) {
         auto *b = (unsigned char *) ptr;
 
-        for (int i = size - 1; i >= 0; i--) {
+        for (size_t i = size; i > 0; i--) {
             for (int j = 7; j >= 0; j--) {
-                unsigned char byte = (b[i] >> j) & 1;
+                unsigned char byte = (b[i - 1] >> j) & 1;
                 Logger::log("%u", byte);
             }
         }

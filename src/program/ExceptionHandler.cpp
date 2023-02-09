@@ -85,7 +85,7 @@ void exception_handler(nn::os::UserExceptionInfo *info) {
 
     // Register Dump
 
-    for (int i = 2; i != 32; ++i)
+    for (int i = 2; i < 29; ++i)
         Logger::log("r%-2d     = 0x%016llX (%21lld)\n", i-2, info->CpuRegisters[i].x, info->CpuRegisters[i].x);
 
     Logger::log("LR      = 0x%016llX (%21lld)\n", info->LR.x, info->LR.x);
