@@ -11,6 +11,9 @@
 #include "helpers/InputHelper.h"
 #include "MemoryPoolMaker.h"
 
+#include "shader/imgui_shader.h"
+#include "init.h"
+
 #define UBOSIZE 0x1000
 
 typedef float Matrix44f[4][4];
@@ -243,14 +246,20 @@ namespace ImguiNvnBackend {
     } else {
       Logger::log("Unable to compile shaders at runtime. falling back to pre-compiled shaders.\n");
 
-      FsHelper::LoadData loadData = {
-          .path = "sd:/mp1r/ShaderData/imgui.bin"
-      };
+//      FsHelper::LoadData loadData = {
+//          .path = "sd:/mp1r/ShaderData/imgui.bin"
+//      };
+//
+//      FsHelper::loadFileFromPath(loadData);
 
-      FsHelper::loadFileFromPath(loadData);
+      void *buf = nn::init::GetAllocator()->Allocate(romfs_ShaderData_imgui_bin_len);
+      EXL_ASSERT(buf, "Failed to Allocate Buffer! File Size: %d", romfs_ShaderData_imgui_bin_len);
+      memcpy(buf, romfs_ShaderData_imgui_bin, romfs_ShaderData_imgui_bin_len);
 
-      bd->imguiShaderBinary.size = loadData.bufSize;
-      bd->imguiShaderBinary.ptr = (u8 *) loadData.buffer;
+      Logger::log("Loaded shader\n");
+
+      bd->imguiShaderBinary.size = romfs_ShaderData_imgui_bin_len;
+      bd->imguiShaderBinary.ptr = (u8 *) buf;
     }
 
     if (bd->imguiShaderBinary.size > 0) {
