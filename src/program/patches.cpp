@@ -5,6 +5,7 @@
 #include "prime/CPlayerMP1.hpp"
 #include "prime/CFinalInput.hpp"
 #include "PlayerMenu.hpp"
+#include "InputWindow.hpp"
 
 namespace patch = exl::patch;
 namespace inst = exl::armv8::inst;
@@ -66,12 +67,17 @@ HOOK_DEFINE_TRAMPOLINE(CPlayer_ProcessInput) {
     GUI::lastKnownTransform = thiz->GetTransform();
     GUI::lastKnownVelocity = thiz->GetVelocityWR(stateManager);
     GUI::lastKnownAngularVelocity = thiz->GetAngularVelocityWR(stateManager);
+//    GUI::lastKnownInput = input;
+//    GUI::hasInput = true;
   }
 };
 
-HOOK_DEFINE_TRAMPOLINE(CControllerStateIOWin_RequiresDraw) {
-  static bool Callback(void *ptr) {
-    return true;
+HOOK_DEFINE_TRAMPOLINE(CStateManagerGameLogicMP1_GameMainLoop) {
+  static void Callback(void *thiz, CStateManager& mgr, void *updateAccess, float dt) {
+    Orig(thiz, mgr, updateAccess, dt);
+
+    GUI::lastKnownInput = *(CFinalInput *)((size_t)thiz + 0x160);
+    GUI::hasInput = true;
   }
 };
 
@@ -87,8 +93,6 @@ void runCodePatches() {
 
 
   CStateManager_DoThinkLogic::InstallAtSymbol("_ZN13CStateManager12DoThinkLogicEf");
-//  CStateManager_DoThinkLogic::InstallAtOffset(0xb03678ull);
   CPlayer_ProcessInput::InstallAtOffset(0xc70334ull);
-  CControllerStateIOWin_RequiresDraw::InstallAtOffset(0x40852cull);
-
+  CStateManagerGameLogicMP1_GameMainLoop::InstallAtOffset(0xc5bc4cull);
 }

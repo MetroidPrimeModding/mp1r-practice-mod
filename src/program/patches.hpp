@@ -3,7 +3,7 @@
 #include "lib.hpp"
 
 struct PatchConfig {
-  bool dash_enabled: 1 = true;
+  bool dash_enabled: 1 = false;
 };
 
 extern PatchConfig PATCH_CONFIG;

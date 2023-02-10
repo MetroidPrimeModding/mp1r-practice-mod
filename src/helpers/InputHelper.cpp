@@ -73,7 +73,7 @@ void InputHelper::updatePadState() {
   prevMouseState = curMouseState;
   nn::hid::GetMouseState(&curMouseState);
 
-  if ((isHoldLeftStick() && isPressRightStick()) || (isHoldRightStick() && isPressLeftStick())) {
+  if (isPressLeftStick()) {
     toggleInput = !toggleInput;
   }
 }

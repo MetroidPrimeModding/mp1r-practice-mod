@@ -13,6 +13,7 @@
 #include "InventoryMenu.hpp"
 #include "PlayerMenu.hpp"
 #include "ProductionFlagMenu.hpp"
+#include "InputWindow.hpp"
 
 #define IMGUI_ENABLED true
 
@@ -27,20 +28,26 @@
 
 void drawDebugWindow() {
   ImGui::SetNextWindowSizeConstraints(ImVec2(200, 100), ImVec2(500, 500));
-  ImGui::Begin("Game Debug Window", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
-
+  ImGui::SetNextWindowCollapsed(!InputHelper::isInputToggled());
+  ImGui::SetNextWindowPos(ImVec2(160, 10), ImGuiCond_FirstUseEver);
+  if (ImGui::Begin("Practice Mod", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
 //  ImGui::SetWindowSize(ImVec2(200, 100), ImGuiCond_FirstUseEver);
 
-  if (ImGui::CollapsingHeader("General Game Toggles")) {
-    BITFIELD_CHECKBOX("Toggle MP1 dash", PATCH_CONFIG.dash_enabled);
-    ImGui::Checkbox("Toggle Skippable Cutscene Override", &CGameState::mCinematicForceSkippableOverride);
-  }
+    if (ImGui::TreeNode("General Game Toggles")) {
+      BITFIELD_CHECKBOX("Toggle MP1 dash", PATCH_CONFIG.dash_enabled);
+      ImGui::Checkbox("Toggle Skippable Cutscene Override", &CGameState::mCinematicForceSkippableOverride);
+      ImGui::TreePop();
+    }
 
-  GUI::drawInventoryMenu();
-  GUI::drawPlayerMenu();
+    GUI::drawInventoryMenu();
+    GUI::drawPlayerMenu();
 //  GUI::drawProductionFlagMenu();
 
+  }
+  InputHelper::toggleInput = !ImGui::IsWindowCollapsed();
   ImGui::End();
+
+  GUI::drawInputWindow();
 }
 
 extern "C" void exl_main(void *x0, void *x1) {
@@ -62,6 +69,7 @@ extern "C" void exl_main(void *x0, void *x1) {
   nvnImGui::addDrawFunc(drawDebugWindow);
 #endif
 
+  CGameState::mCinematicForceSkippableOverride = true;
 }
 
 extern "C" NORETURN void exl_exception_entry() {
