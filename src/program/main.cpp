@@ -10,6 +10,8 @@
 #include "ExceptionHandler.h"
 
 #include "CGame/CGameState.h"
+#include "InventoryMenu.hpp"
+#include "PlayerMenu.hpp"
 
 #define IMGUI_ENABLED true
 
@@ -22,7 +24,6 @@
     }                                                                                                                  \
   }
 
-
 void drawDebugWindow() {
 
   ImGui::Begin("Game Debug Window");
@@ -32,6 +33,9 @@ void drawDebugWindow() {
     BITFIELD_CHECKBOX("Toggle MP1 dash", PATCH_CONFIG.dash_enabled);
     ImGui::Checkbox("Toggle Skippable Cutscene Override", &CGameState::mCinematicForceSkippableOverride);
   }
+
+  GUI::drawInventoryMenu();
+  GUI::drawPlayerMenu();
 
   ImGui::End();
 }

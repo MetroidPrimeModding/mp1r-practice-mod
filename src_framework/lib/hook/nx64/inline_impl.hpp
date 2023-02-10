@@ -16,6 +16,15 @@ namespace exl::hook::nx64 {
         };
     };
 
+    union FpRegister {
+      double D;
+      float S;
+    };
+
+    union FpRegisters {
+      FpRegister m_F[31];
+    };
+
     namespace impl {
         /* This type is only unioned with GpRegisters, so this is valid. */
         struct GpRegisterAccessorImpl {
@@ -37,6 +46,26 @@ namespace exl::hook::nx64 {
                 return Get().m_Gp[index].W;
             }
         };
+
+        struct FpRegisterAccessorImpl {
+            FpRegisters& Get() {
+                return *reinterpret_cast<FpRegisters*>(this);
+            }
+        };
+
+        struct FpRegisterAccessor64 : public FpRegisterAccessorImpl {
+              double& operator[](int index)
+              {
+                  return Get().m_F[index].D;
+              }
+        };
+
+        struct FpRegisterAccessor32 : public FpRegisterAccessorImpl {
+            float& operator[](int index)
+            {
+                return Get().m_F[index].S;
+            }
+        };
     }
 
     struct InlineCtx {
@@ -45,6 +74,11 @@ namespace exl::hook::nx64 {
             impl::GpRegisterAccessor64 X;
             impl::GpRegisterAccessor32 W;
             GpRegisters m_Gpr;
+        };
+        union {
+            impl::FpRegisterAccessor64 D;
+            impl::FpRegisterAccessor32 S;
+            FpRegisters m_Fpr;
         };
     };
 

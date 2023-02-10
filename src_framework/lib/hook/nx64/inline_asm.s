@@ -13,7 +13,7 @@
 
 /* For these macros, LR is deliberately not backed up as that's handled by the entry's entrypoint. */
 .macro armBackupRegisters
-    sub sp, sp, #0x100
+    sub sp, sp, #0x200
     stp x0, x1, [sp, #0x00]
     stp x2, x3, [sp, #0x10]
     stp x4, x5, [sp, #0x20]
@@ -29,6 +29,22 @@
     stp x24, x25, [sp, #0xC0]
     stp x26, x27, [sp, #0xD0]
     stp x28, x29, [sp, #0xE0]
+    stp d0, d1, [sp, #0x100]
+    stp d2, d3, [sp, #0x110]
+    stp d4, d5, [sp, #0x120]
+    stp d6, d7, [sp, #0x130]
+    stp d8, d9, [sp, #0x140]
+    stp d10, d11, [sp, #0x150]
+    stp d12, d13, [sp, #0x160]
+    stp d14, d15, [sp, #0x170]
+    stp d16, d17, [sp, #0x180]
+    stp d18, d19, [sp, #0x190]
+    stp d20, d21, [sp, #0x1A0]
+    stp d22, d23, [sp, #0x1B0]
+    stp d24, d25, [sp, #0x1C0]
+    stp d26, d27, [sp, #0x1D0]
+    stp d28, d29, [sp, #0x1E0]
+    stp d30, d31, [sp, #0x1F0]
 .endm
 
 .macro armRecoverRegisters
@@ -47,7 +63,23 @@
     ldp x24, x25, [sp, #0xC0]
     ldp x26, x27, [sp, #0xD0]
     ldp x28, x29, [sp, #0xE0]
-    add sp, sp, #0x100
+    ldp d0, d1, [sp, #0x100]
+    ldp d2, d3, [sp, #0x110]
+    ldp d4, d5, [sp, #0x120]
+    ldp d6, d7, [sp, #0x130]
+    ldp d8, d9, [sp, #0x140]
+    ldp d10, d11, [sp, #0x150]
+    ldp d12, d13, [sp, #0x160]
+    ldp d14, d15, [sp, #0x170]
+    ldp d16, d17, [sp, #0x180]
+    ldp d18, d19, [sp, #0x190]
+    ldp d20, d21, [sp, #0x1A0]
+    ldp d22, d23, [sp, #0x1B0]
+    ldp d24, d25, [sp, #0x1C0]
+    ldp d26, d27, [sp, #0x1D0]
+    ldp d28, d29, [sp, #0x1E0]
+    ldp d30, d31, [sp, #0x1F0]
+    add sp, sp, #0x200
 .endm
 
 CODE_BEGIN exl_inline_hook_impl

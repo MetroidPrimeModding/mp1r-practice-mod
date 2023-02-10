@@ -8,4 +8,7 @@ struct PatchConfig {
 
 extern PatchConfig PATCH_CONFIG;
 
+class CStateManager;
+extern CStateManager* mostRecentStateManager;
+
 void runCodePatches();
