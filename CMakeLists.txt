@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.21)
-project(subsdk CXX C ASM)
+project(mp1r-practice-mod CXX C ASM)
 
 ## Error if not using switch toolchain file
 if (NOT SWITCH)

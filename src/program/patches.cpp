@@ -35,7 +35,8 @@ HOOK_DEFINE_INLINE(Dash_VelocityClamp) {
 
 HOOK_DEFINE_INLINE(CheckFloatVar) {
   static void Callback(exl::hook::InlineCtx *ctx) {
-    Logger::log("CheckFloatVar: %f\n", ctx->S[1], offsetof(exl::hook::InlineCtx, m_Fpr));
+    // This hook (even if empty) casuses physics to be ice
+//    Logger::log("CheckFloatVar: %f\n", ctx->S[1], offsetof(exl::hook::InlineCtx, m_Fpr));
   }
 };
 
@@ -54,7 +55,10 @@ void runCodePatches() {
   Dash_VelocityClamp::InstallAtOffset(0xcee31Cull);
   Dash_VelocityClamp::InstallAtOffset(0xcee334ull);
 
+  // Uncomment this hook to cause physics to be ice
 //  CheckFloatVar::InstallAtOffset(0xcee418ll);
+
+
   CStateManager_DoThinkLogic::InstallAtSymbol("_ZN13CStateManager12DoThinkLogicEf");
 //  CStateManager_DoThinkLogic::InstallAtOffset(0xb03678ull);
 }

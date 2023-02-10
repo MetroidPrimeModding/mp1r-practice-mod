@@ -75,6 +75,7 @@ namespace exl::hook::nx64 {
             impl::GpRegisterAccessor32 W;
             GpRegisters m_Gpr;
         };
+        uint64_t spacer;
         union {
             impl::FpRegisterAccessor64 D;
             impl::FpRegisterAccessor32 S;
