@@ -1,7 +1,10 @@
 #include "patches.hpp"
 #include "logger/Logger.hpp"
-#include "CObject/CObjectId.h"
+#include "prime/CObjectId.hpp"
 #include "InventoryMenu.hpp"
+#include "prime/CPlayerMP1.hpp"
+#include "prime/CFinalInput.hpp"
+#include "PlayerMenu.hpp"
 
 namespace patch = exl::patch;
 namespace inst = exl::armv8::inst;
@@ -46,7 +49,31 @@ HOOK_DEFINE_TRAMPOLINE(CStateManager_DoThinkLogic) {
     return Orig(arg1, arg2);
   }
 };
-CStateManager* mostRecentStateManager;
+
+CStateManager *mostRecentStateManager;
+
+HOOK_DEFINE_TRAMPOLINE(CPlayer_ProcessInput) {
+  static void Callback(CPlayerMP1 *thiz, const CFinalInput &input, CStateManager &stateManager) {
+    if (GUI::hasDesiredPositionData) {
+      GUI::hasDesiredPositionData = false;
+      thiz->SetTransform(GUI::desiredTransform);
+      thiz->SetVelocityWR(stateManager, GUI::desiredVelocity);
+      thiz->SetAngularVelocityWR(stateManager, GUI::desiredAngularVelocity);
+    }
+
+    Orig(thiz, input, stateManager);
+
+    GUI::lastKnownTransform = thiz->GetTransform();
+    GUI::lastKnownVelocity = thiz->GetVelocityWR(stateManager);
+    GUI::lastKnownAngularVelocity = thiz->GetAngularVelocityWR(stateManager);
+  }
+};
+
+HOOK_DEFINE_TRAMPOLINE(CControllerStateIOWin_RequiresDraw) {
+  static bool Callback(void *ptr) {
+    return true;
+  }
+};
 
 void runCodePatches() {
   Dash_ScanVisorCheck::InstallAtOffset(0xceeab0ull);
@@ -61,4 +88,7 @@ void runCodePatches() {
 
   CStateManager_DoThinkLogic::InstallAtSymbol("_ZN13CStateManager12DoThinkLogicEf");
 //  CStateManager_DoThinkLogic::InstallAtOffset(0xb03678ull);
+  CPlayer_ProcessInput::InstallAtOffset(0xc70334ull);
+  CControllerStateIOWin_RequiresDraw::InstallAtOffset(0x40852cull);
+
 }

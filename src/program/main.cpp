@@ -9,9 +9,10 @@
 
 #include "ExceptionHandler.h"
 
-#include "CGame/CGameState.h"
+#include "prime/CGameState.hpp"
 #include "InventoryMenu.hpp"
 #include "PlayerMenu.hpp"
+#include "ProductionFlagMenu.hpp"
 
 #define IMGUI_ENABLED true
 
@@ -25,9 +26,10 @@
   }
 
 void drawDebugWindow() {
+  ImGui::SetNextWindowSizeConstraints(ImVec2(200, 100), ImVec2(500, 500));
+  ImGui::Begin("Game Debug Window", nullptr, ImGuiWindowFlags_AlwaysAutoResize);
 
-  ImGui::Begin("Game Debug Window");
-  ImGui::SetWindowSize(ImVec2(200, 100), ImGuiCond_FirstUseEver);
+//  ImGui::SetWindowSize(ImVec2(200, 100), ImGuiCond_FirstUseEver);
 
   if (ImGui::CollapsingHeader("General Game Toggles")) {
     BITFIELD_CHECKBOX("Toggle MP1 dash", PATCH_CONFIG.dash_enabled);
@@ -36,6 +38,7 @@ void drawDebugWindow() {
 
   GUI::drawInventoryMenu();
   GUI::drawPlayerMenu();
+//  GUI::drawProductionFlagMenu();
 
   ImGui::End();
 }

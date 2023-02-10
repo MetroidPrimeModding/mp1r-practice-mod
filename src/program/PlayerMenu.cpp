@@ -4,47 +4,63 @@
 #include "InventoryMenu.hpp"
 #include "patches.hpp"
 #include "imgui.h"
+#include "prime/CPlayerMP1.hpp"
 
 namespace GUI {
+  bool hasDesiredPositionData = false;
+
+  CTransform4f desiredTransform = CTransform4f::Identity();
+  CTransform4f lastKnownTransform = CTransform4f::Identity();
+  CVector3f desiredVelocity{};
+  CVector3f lastKnownVelocity{};
+  CAxisAngle desiredAngularVelocity{};
+  CAxisAngle lastKnownAngularVelocity{};
+
   CTransform4f savedPos{CTransform4f::Identity()};
   CVector3f savedVelocity{};
-  CVector3f savedAngularVelocity{};
+  CAxisAngle savedAngularVelocity{};
 //  u32 savedWorldAssetID{0};
 //  u32 savedAreaAssetID{0};
 
   void drawPlayerMenu() {
-    CStateManager *stateManager = mostRecentStateManager;
-    if (stateManager == nullptr) return;
-    auto gameLogic = stateManager->GameLogic();
-    if (gameLogic == nullptr) return;
-    auto player = gameLogic->PlayerActor();
-    if (player == nullptr) return;
+//    CStateManager *stateManager = mostRecentStateManager;
+//    if (stateManager == nullptr) return;
+//    auto gameLogic = stateManager->GameLogic();
+//    if (gameLogic == nullptr) return;
+//    auto player = gameLogic->PlayerActor();
+//    if (player == nullptr) return;
 //    CPlayerState *playerState = stateManager->GetPlayerState();
 
     ImGuiSliderFlags flags = ImGuiSliderFlags_None
                              | ImGuiSliderFlags_NoRoundToFormat;
     if (ImGui::TreeNode("Player")) {
       ImGui::Text("Saved position:");
-//      if (ImGui::Button("Save")) {
-//        savePos();
-//      }
-//      ImGui::SameLine();
-//      if (ImGui::Button("Load")) {
-//        loadPos();
-//      }
+      ImGui::Text("%3.4f %3.4f %3.4f", savedPos.x, savedPos.y, savedPos.z);
+      if (ImGui::Button("Save")) {
+        savePos();
+      }
       ImGui::SameLine();
+      if (ImGui::Button("Load")) {
+        loadPos();
+      }
+//      ImGui::SameLine();
 
       float xyz[3] = {
-          player->GetTransform().x,
-          player->GetTransform().y,
-          player->GetTransform().z
+          lastKnownTransform.x,
+          lastKnownTransform.y,
+          lastKnownTransform.z
       };
 
-      ImGui::DragFloat3("##pos", xyz, 1.f, -FLT_MAX, FLT_MAX, "%.3f", flags);
-//      CTransform4f newTransform = player->GetTransform();
-//      newTransform.x = xyz[0];
-//      newTransform.y = xyz[1];
-//      newTransform.z = xyz[2];
+      if (ImGui::DragFloat3("##pos", xyz, 1.f, -FLT_MAX, FLT_MAX, "%.3f", flags)) {
+        desiredTransform = lastKnownTransform;
+        desiredTransform.x = xyz[0];
+        desiredTransform.y = xyz[1];
+        desiredTransform.z = xyz[2];
+        desiredVelocity = lastKnownVelocity;
+        desiredAngularVelocity = lastKnownAngularVelocity;
+        hasDesiredPositionData = true;
+      }
+
 //      player->SetTransform(newTransform);
 
 //      if (ImGui::Button("IS on")) {
@@ -102,27 +118,19 @@ namespace GUI {
 //    *player->getTransform() = savedPos;
 //    *player->GetVelocity() = savedVelocity;
 //    *player->GetAngularVelocity() = savedAngularVelocity;
+    desiredTransform = savedPos;
+    desiredVelocity = savedVelocity;
+    desiredAngularVelocity = savedAngularVelocity;
+    hasDesiredPositionData = true;
   }
 
   void savePos() {
-//    CStateManager *stateManager = CStateManager_INSTANCE;
-//    CPlayerMP1 *player = stateManager->Player();
-//
-//    CGameGlobalObjects *globals = ((CGameGlobalObjects *) 0x80457798);
-//    CGameState *gameState = globals->getGameState();
-//
-//
-//    u32 currentWorldAssetID = gameState->MLVL();
-//    u32 currentAreaAssetID = 0;
-//    CWorld *world = stateManager->GetWorld();
-//    if (!world) return;
-//    currentAreaAssetID = world->areas()->ptr[gameState->CurrentWorldState().x4_areaId.id].ptr->IGetAreaAssetId();
-//
 //    savedPos = *player->getTransform();
 //    savedVelocity = *player->GetVelocity();
 //    savedAngularVelocity = *player->GetAngularVelocity();
-//    savedWorldAssetID = currentWorldAssetID;
-//    savedAreaAssetID = currentAreaAssetID;
+    savedPos = lastKnownTransform;
+    savedVelocity = lastKnownVelocity;
+    savedAngularVelocity = lastKnownAngularVelocity;
   }
 }
 
