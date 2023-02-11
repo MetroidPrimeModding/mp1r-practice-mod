@@ -1,10 +1,17 @@
-
-
 #include "PlayerMenu.hpp"
 #include "InventoryMenu.hpp"
 #include "patches.hpp"
 #include "imgui.h"
 #include "prime/CPlayerMP1.hpp"
+
+#define BITFIELD_CHECKBOX(label, bf, ...)                                                                              \
+  {                                                                                                                    \
+    bool b = (bf);                                                                                                     \
+    if (ImGui::Checkbox(label, &b)) {                                                                                  \
+      (bf) = b;                                                                                                        \
+      __VA_ARGS__                                                                                                      \
+    }                                                                                                                  \
+  }
 
 namespace GUI {
   bool hasDesiredPositionData = false;
@@ -60,6 +67,8 @@ namespace GUI {
         desiredAngularVelocity = lastKnownAngularVelocity;
         hasDesiredPositionData = true;
       }
+      BITFIELD_CHECKBOX("Allow position edit with ZR + sticks", PATCH_CONFIG.pos_edit);
+      ImGui::Text("Hold ZL for faster movement\n");
 
 //      player->SetTransform(newTransform);
 

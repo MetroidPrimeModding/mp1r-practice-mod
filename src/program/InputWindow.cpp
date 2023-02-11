@@ -4,6 +4,7 @@
 #define IMGUI_DEFINE_MATH_OPERATORS
 
 #include "imgui_internal.h"
+#include "patches.hpp"
 
 namespace GUI {
   bool hasInput;
@@ -49,6 +50,7 @@ namespace GUI {
   }
 
   void drawInput(CFinalInput &p1) {
+    if (!PATCH_CONFIG.show_input) return;
     ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_Once, ImVec2(0, 0));
     ImGui::Begin(
         "Input", nullptr,

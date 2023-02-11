@@ -129,6 +129,17 @@ public:
 
   static bool isHoldRightStick() { return isButtonHold(nn::hid::NpadButton::StickR); }
 
+  // analog
+
+  static float getLeftStickX() { return ((float) curControllerState.mAnalogStickL.X) / 32768.f; }
+
+  static float getLeftStickY() { return ((float) curControllerState.mAnalogStickL.Y) / 32768.f; }
+
+  static float getRightStickX() { return ((float) curControllerState.mAnalogStickR.X) / 32768.f; }
+
+  static float getRightStickY() { return ((float) curControllerState.mAnalogStickR.Y) / 32768.f; }
+
+
 private:
   static bool tryGetContState(nn::hid::NpadBaseState *state, ulong port);
 

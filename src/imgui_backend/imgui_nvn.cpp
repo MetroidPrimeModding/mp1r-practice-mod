@@ -218,6 +218,9 @@ void nvnImGui::procDraw() {
   ImguiNvnBackend::newFrame();
   ImGui::NewFrame();
   ImGui::GetIO().MouseDrawCursor = InputHelper::toggleInput;
+  if (ImGui::GetMousePos().x < 1 || ImGui::GetMousePos().y < 1) {
+    ImGui::GetIO().MouseDrawCursor = false;
+  }
 
   for (auto drawFunc: drawQueue) {
     drawFunc();

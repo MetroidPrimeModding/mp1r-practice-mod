@@ -6,6 +6,7 @@
 #include "prime/CFinalInput.hpp"
 #include "PlayerMenu.hpp"
 #include "InputWindow.hpp"
+#include "helpers/InputHelper.h"
 
 namespace patch = exl::patch;
 namespace inst = exl::armv8::inst;
@@ -55,11 +56,57 @@ CStateManager *mostRecentStateManager;
 
 HOOK_DEFINE_TRAMPOLINE(CPlayer_ProcessInput) {
   static void Callback(CPlayerMP1 *thiz, const CFinalInput &input, CStateManager &stateManager) {
+
     if (GUI::hasDesiredPositionData) {
       GUI::hasDesiredPositionData = false;
       thiz->SetTransform(GUI::desiredTransform);
       thiz->SetVelocityWR(stateManager, GUI::desiredVelocity);
       thiz->SetAngularVelocityWR(stateManager, GUI::desiredAngularVelocity);
+    } else {
+      if (!InputHelper::isInputToggled()) {
+        if (input.GetDigitalHeld(EControl::ZR) && input.GetDigitalHeld(EControl::R) && input.GetDigitalHeld(EControl::DPAD_UP)) {
+          GUI::loadPos();
+        }
+        if (input.GetDigitalHeld(EControl::RIGHT_STICK_CLICK) && input.GetDigitalHeld(EControl::DPAD_UP)) {
+          GUI::loadPos();
+        }
+        if (input.GetDigitalHeld(EControl::ZR) && input.GetDigitalHeld(EControl::R) && input.GetDigitalHeld(EControl::DPAD_DOWN)) {
+          GUI::savePos();
+        }
+        if (input.GetDigitalHeld(EControl::RIGHT_STICK_CLICK) && input.GetDigitalHeld(EControl::DPAD_DOWN)) {
+          GUI::savePos();
+        }
+      } else {
+        if (PATCH_CONFIG.pos_edit && InputHelper::isHoldZR()) {
+          float multiplier = 0.3f;
+          if (InputHelper::isHoldZL()) {
+            multiplier = 0.9f;
+          }
+          CVector3f movement = CVector3f(
+              -InputHelper::getLeftStickX() * multiplier,
+              InputHelper::getRightStickY() * multiplier,
+              InputHelper::getLeftStickY() * multiplier
+          );
+          CTransform4f transform = thiz->GetTransform();
+          movement = transform.Rotate(movement);
+//          Logger::log("PosD: %f, %f, %f\n", x,y,z);
+//          Logger::log("Pos: %f, %f, %f\n", GUI::lastKnownTransform.x, GUI::lastKnownTransform.y, GUI::lastKnownTransform.z);
+          GUI::lastKnownTransform.x = GUI::lastKnownTransform.x + movement.x;
+          GUI::lastKnownTransform.y = GUI::lastKnownTransform.y + movement.y;
+          GUI::lastKnownTransform.z = GUI::lastKnownTransform.z + movement.z;
+//          Logger::log("Pos: %f, %f, %f\n", GUI::lastKnownTransform.x, GUI::lastKnownTransform.y, GUI::lastKnownTransform.z);
+
+          auto rot = CRelAngle(InputHelper::getRightStickX() * -0.05f);
+          CTransform4f rotT = CTransform4f::Identity();
+          rotT.RotateLocalY(rot);
+          GUI::lastKnownTransform = GUI::lastKnownTransform * rotT;
+        }
+
+        thiz->SetTransform(GUI::lastKnownTransform);
+        thiz->SetVelocityWR(stateManager, GUI::lastKnownVelocity);
+        thiz->SetAngularVelocityWR(stateManager, GUI::lastKnownAngularVelocity);
+      }
+
     }
 
     Orig(thiz, input, stateManager);
@@ -73,20 +120,20 @@ HOOK_DEFINE_TRAMPOLINE(CPlayer_ProcessInput) {
 };
 
 HOOK_DEFINE_TRAMPOLINE(CStateManagerGameLogicMP1_GameMainLoop) {
-  static void Callback(void *thiz, CStateManager& mgr, void *updateAccess, float dt) {
+  static void Callback(void *thiz, CStateManager &mgr, void *updateAccess, float dt) {
     Orig(thiz, mgr, updateAccess, dt);
 
-    GUI::lastKnownInput = *(CFinalInput *)((size_t)thiz + 0x160);
+    GUI::lastKnownInput = *(CFinalInput *) ((size_t) thiz + 0x160);
     GUI::hasInput = true;
   }
 };
 
 void runCodePatches() {
-  Dash_ScanVisorCheck::InstallAtOffset(0xceeab0ull);
-  Dash_ScanVisorCheck::InstallAtOffset(0xceeac4ull);
-  Dash_Speed::InstallAtOffset(0xcef7a8ull);
-  Dash_VelocityClamp::InstallAtOffset(0xcee31Cull);
-  Dash_VelocityClamp::InstallAtOffset(0xcee334ull);
+//  Dash_ScanVisorCheck::InstallAtOffset(0xceeab0ull);
+//  Dash_ScanVisorCheck::InstallAtOffset(0xceeac4ull);
+//  Dash_Speed::InstallAtOffset(0xcef7a8ull);
+//  Dash_VelocityClamp::InstallAtOffset(0xcee31Cull);
+//  Dash_VelocityClamp::InstallAtOffset(0xcee334ull);
 
   // Uncomment this hook to cause physics to be ice
 //  CheckFloatVar::InstallAtOffset(0xcee418ll);

@@ -26,6 +26,12 @@ struct CAxisAngle : CVector3f {
   inline CAxisAngle(float x, float y, float z) : CVector3f(x, y, z) {}
 };
 
+class CRelAngle {
+public:
+  inline CRelAngle(float theta): theta(theta) {}
+  float theta;
+};
+
 class CTransform4f {
 public:
   union {
@@ -67,9 +73,17 @@ public:
   }
 
   static CTransform4f Translate(float x, float y, float z);
-  CTransform4f RotateX(float theta);
-  CTransform4f RotateY(float theta);
-  CTransform4f RotateZ(float theta);
+//  CTransform4f RotateX(float theta);
+//  CTransform4f RotateY(float theta);
+  CTransform4f RotateLocalX(const CRelAngle &theta);
+  CTransform4f RotateLocalY(const CRelAngle &theta);
+  CTransform4f RotateLocalZ(const CRelAngle &theta);
+  void MultiplyRotation(CTransform4f const&) const;
+  void MultiplyIgnoreTranslation(const CTransform4f *param_1);
+
+  CTransform4f operator*(const CTransform4f &rhs) const;
+  CVector3f TransposeRotate(CVector3f const&) const;
+  CVector3f Rotate(CVector3f const&) const;
 
   inline CVector3f origin() { return CVector3f(matrix[3], matrix[3 + 4], matrix[3 + 8]); };
 };

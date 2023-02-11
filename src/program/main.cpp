@@ -26,16 +26,32 @@
     }                                                                                                                  \
   }
 
+ImVec2 lastWindowPos = ImVec2(160, 10);
+bool wasJustOpened = false;
+
 void drawDebugWindow() {
   ImGui::SetNextWindowSizeConstraints(ImVec2(200, 100), ImVec2(500, 500));
   ImGui::SetNextWindowCollapsed(!InputHelper::isInputToggled());
-  ImGui::SetNextWindowPos(ImVec2(160, 10), ImGuiCond_FirstUseEver);
+  if (InputHelper::isInputToggled()) {
+    if (!wasJustOpened) {
+      wasJustOpened = true;
+      ImGui::SetNextWindowPos(lastWindowPos, ImGuiCond_None);
+    }
+  } else {
+    ImGui::SetNextWindowPos(ImVec2(-1600, 10), ImGuiCond_None);
+    wasJustOpened = false;
+  }
   if (ImGui::Begin("Practice Mod", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
+    auto pos = ImGui::GetWindowPos();
+    if (pos.x >= 0) {
+      lastWindowPos = pos;
+    }
 //  ImGui::SetWindowSize(ImVec2(200, 100), ImGuiCond_FirstUseEver);
 
     if (ImGui::TreeNode("General Game Toggles")) {
-      BITFIELD_CHECKBOX("Toggle MP1 dash", PATCH_CONFIG.dash_enabled);
+//      BITFIELD_CHECKBOX("Toggle MP1 dash", PATCH_CONFIG.dash_enabled);
       ImGui::Checkbox("Toggle Skippable Cutscene Override", &CGameState::mCinematicForceSkippableOverride);
+      BITFIELD_CHECKBOX("Show input", PATCH_CONFIG.show_input);
       ImGui::TreePop();
     }
 
