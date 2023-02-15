@@ -64,6 +64,7 @@ void drawDebugWindow() {
   ImGui::End();
 
   GUI::drawInputWindow();
+  GUI::drawMonitorWindow();
 }
 
 extern "C" void exl_main(void *x0, void *x1) {

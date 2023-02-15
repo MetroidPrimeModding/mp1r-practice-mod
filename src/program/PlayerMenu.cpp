@@ -24,8 +24,8 @@ namespace GUI {
   CAxisAngle lastKnownAngularVelocity{};
 
   CTransform4f savedPos{CTransform4f::Identity()};
-  CVector3f savedVelocity{};
-  CAxisAngle savedAngularVelocity{};
+//  CVector3f savedVelocity{};
+//  CAxisAngle savedAngularVelocity{};
 //  u32 savedWorldAssetID{0};
 //  u32 savedAreaAssetID{0};
 
@@ -128,8 +128,8 @@ namespace GUI {
 //    *player->GetVelocity() = savedVelocity;
 //    *player->GetAngularVelocity() = savedAngularVelocity;
     desiredTransform = savedPos;
-    desiredVelocity = savedVelocity;
-    desiredAngularVelocity = savedAngularVelocity;
+    desiredVelocity = {0,0,0};
+    desiredAngularVelocity = {0,0,0};
     hasDesiredPositionData = true;
   }
 
@@ -138,8 +138,8 @@ namespace GUI {
 //    savedVelocity = *player->GetVelocity();
 //    savedAngularVelocity = *player->GetAngularVelocity();
     savedPos = lastKnownTransform;
-    savedVelocity = lastKnownVelocity;
-    savedAngularVelocity = lastKnownAngularVelocity;
+//    savedVelocity = lastKnownVelocity;
+//    savedAngularVelocity = lastKnownAngularVelocity;
   }
 }
 

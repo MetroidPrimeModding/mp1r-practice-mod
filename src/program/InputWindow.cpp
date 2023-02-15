@@ -5,12 +5,71 @@
 
 #include "imgui_internal.h"
 #include "patches.hpp"
+#include "PlayerMenu.hpp"
 
 namespace GUI {
   bool hasInput;
   CFinalInput lastKnownInput;
+  double igt;
 
   void drawInput(CFinalInput &p1);
+  void drawPos();
+  void drawVelocity();
+
+  void drawIGT() {
+    double time = igt;
+    int ms = (int) (time * 1000.0) % 1000;
+    int seconds = (int) time % 60;
+    int minutes = ((int) time / 60) % 60;
+    int hours = ((int) time / 60 / 60) % 60;
+    ImGui::Text("%02d:%02d:%02d.%03d", hours, minutes, seconds, ms);
+  }
+
+  void drawMonitorWindow() {
+    if (!PATCH_CONFIG.OSD_showMonitor) {
+      return;
+    }
+    {
+      ImGui::SetNextWindowPos(ImVec2(630, 10), ImGuiCond_Once, ImVec2(1, 0));
+      ImGui::Begin(
+          "Monitor", nullptr,
+          ImGuiWindowFlags_NoResize |
+          ImGuiWindowFlags_AlwaysAutoResize |
+          ImGuiWindowFlags_NoTitleBar |
+//          ImGuiWindowFlags_NoInputs |
+//          ImGuiWindowFlags_NoNavInputs |
+//          ImGuiWindowFlags_NoNavFocus |
+//          ImGuiWindowFlags_NoNav |
+          ImGuiWindowFlags_NoFocusOnAppearing |
+//          ImGuiWindowFlags_NoMove |
+//          ImGuiWindowFlags_NoDecoration |
+          //        ImGuiWindowFlags_NoBackground |
+          ImGuiFocusedFlags_None
+      );
+      if (PATCH_CONFIG.OSD_showIGT) {
+        drawIGT();
+      }
+//      drawRoomTime();
+      if (PATCH_CONFIG.OSD_showPos) {
+        drawPos();
+      }
+      if (PATCH_CONFIG.OSD_showVelocity) {
+        drawVelocity();
+      }
+//      if (SETTINGS.OSD_showRotationalVelocity) {
+//        drawRotationalVelocity();
+//      }
+//      if (SETTINGS.OSD_showFrameTime) {
+//        drawFrameTime();
+//      }
+//      if (SETTINGS.OSD_showMemoryGraph || SETTINGS.OSD_showMemoryInfo) {
+//        drawMemoryUsage();
+//      }
+
+      ImGui::End();
+    }
+  }
+
   void drawInputWindow() {
 //    ImGui::SetNextWindowPos(ImVec2(400, 400), ImGuiCond_FirstUseEver, ImVec2(1, 1));
 //    ImGui::Begin(
@@ -57,10 +116,10 @@ namespace GUI {
         ImGuiWindowFlags_NoResize |
         ImGuiWindowFlags_AlwaysAutoResize |
         ImGuiWindowFlags_NoTitleBar |
-        ImGuiWindowFlags_NoInputs |
-        ImGuiWindowFlags_NoNavInputs |
-        ImGuiWindowFlags_NoNavFocus |
-        ImGuiWindowFlags_NoNav |
+//        ImGuiWindowFlags_NoInputs |
+//        ImGuiWindowFlags_NoNavInputs |
+//        ImGuiWindowFlags_NoNavFocus |
+//        ImGuiWindowFlags_NoNav |
         ImGuiWindowFlags_NoFocusOnAppearing |
         ImGuiWindowFlags_NoDecoration |
         ImGuiWindowFlags_NoBackground |
@@ -70,6 +129,7 @@ namespace GUI {
     ImDrawList *dl = ImGui::GetWindowDrawList();
     ImVec2 p = ImGui::GetCursorScreenPos();
 
+    constexpr float stickThickness = 3;
     constexpr float leftStickRadius = 15;
     ImVec2 leftStickCenter = p + ImVec2(15, 35);
     constexpr float dpadRadius = 10;
@@ -112,7 +172,8 @@ namespace GUI {
       dl->AddLine(
           leftStickCenter,
           leftStickCenter + ImVec2(x * leftStickRadius, y * leftStickRadius),
-          red
+          red,
+          stickThickness
       );
     }
 
@@ -128,7 +189,8 @@ namespace GUI {
       dl->AddLine(
           rightStickCenter,
           rightStickCenter + ImVec2(x * rightStickRadius, y * rightStickRadius),
-          red
+          red,
+          stickThickness
       );
     }
 
@@ -276,5 +338,24 @@ namespace GUI {
 
     ImGui::Dummy(ImVec2(130, 80));
     ImGui::End();
+  }
+
+  void drawPos() {
+    auto pos = GUI::lastKnownTransform;
+    float x = pos.x;
+    float y = pos.y;
+    float z = pos.z;
+    ImGui::Text("Pos: %7.2fx %7.2fy %7.2fz", x, y, z);
+  }
+
+  void drawVelocity() {
+    auto vel = GUI::lastKnownVelocity;
+
+    float x = vel.x;
+    float y = vel.y;
+    float z = vel.z;
+    float h = sqrtf(x * x + y * y);
+
+    ImGui::Text("Vel: %5.2fx %5.2fy %5.2fz %5.2fh", x, y, z, h);
   }
 }

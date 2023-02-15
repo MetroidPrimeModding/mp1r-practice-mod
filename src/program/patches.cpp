@@ -45,17 +45,13 @@ HOOK_DEFINE_INLINE(CheckFloatVar) {
   }
 };
 
-HOOK_DEFINE_TRAMPOLINE(CStateManager_DoThinkLogic) {
-  static void Callback(void *arg1, float arg2) {
-    mostRecentStateManager = (CStateManager *) arg1;
-    return Orig(arg1, arg2);
-  }
-};
-
 CStateManager *mostRecentStateManager;
 
 HOOK_DEFINE_TRAMPOLINE(CPlayer_ProcessInput) {
   static void Callback(CPlayerMP1 *thiz, const CFinalInput &input, CStateManager &stateManager) {
+    mostRecentStateManager = &stateManager;
+    auto *gameState = stateManager.GameState();
+    GUI::igt = gameState->GetPlayTime();
 
     if (GUI::hasDesiredPositionData) {
       GUI::hasDesiredPositionData = false;
@@ -138,8 +134,6 @@ void runCodePatches() {
   // Uncomment this hook to cause physics to be ice
 //  CheckFloatVar::InstallAtOffset(0xcee418ll);
 
-
-  CStateManager_DoThinkLogic::InstallAtSymbol("_ZN13CStateManager12DoThinkLogicEf");
   CPlayer_ProcessInput::InstallAtOffset(0xc70334ull);
   CStateManagerGameLogicMP1_GameMainLoop::InstallAtOffset(0xc5bc4cull);
 }
