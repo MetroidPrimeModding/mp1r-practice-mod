@@ -10,12 +10,12 @@ public:
 
 class CPhysicsActorMP1: public CActorMP1 {
 public:
-  CVector3f GetVelocityWR(const CStateManager &mgr) const;
+  CVector3f *GetVelocityWR(const CStateManager &mgr) const;
   //_ZN16CPhysicsActorMP113SetVelocityWRER13CStateManagerRK9CVector3f
   //_ZN16CPhysicsActorMP113SetVelocityWRERK13CStateManagerRK9CVector3f
   void SetVelocityWR(CStateManager &mgr, const CVector3f &vel);
 
-  CAxisAngle GetAngularVelocityWR(const CStateManager &mgr) const;
+  CAxisAngle *GetAngularVelocityWR(const CStateManager &mgr) const;
   void SetAngularVelocityWR(CStateManager &mgr, const CAxisAngle &vel);
 };
 

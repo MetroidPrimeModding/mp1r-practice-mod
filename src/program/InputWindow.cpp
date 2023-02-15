@@ -349,12 +349,12 @@ namespace GUI {
   }
 
   void drawVelocity() {
-    auto vel = GUI::lastKnownVelocity;
+    auto &vel = GUI::lastKnownVelocity;
 
     float x = vel.x;
     float y = vel.y;
     float z = vel.z;
-    float h = sqrtf(x * x + y * y);
+    float h = sqrtf(x * x + z * z);
 
     ImGui::Text("Vel: %5.2fx %5.2fy %5.2fz %5.2fh", x, y, z, h);
   }

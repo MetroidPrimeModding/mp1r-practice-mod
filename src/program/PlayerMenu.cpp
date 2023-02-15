@@ -4,6 +4,8 @@
 #include "imgui.h"
 #include "prime/CPlayerMP1.hpp"
 
+#include <numeric>
+
 #define BITFIELD_CHECKBOX(label, bf, ...)                                                                              \
   {                                                                                                                    \
     bool b = (bf);                                                                                                     \

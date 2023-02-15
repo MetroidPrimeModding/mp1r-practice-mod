@@ -108,8 +108,8 @@ HOOK_DEFINE_TRAMPOLINE(CPlayer_ProcessInput) {
     Orig(thiz, input, stateManager);
 
     GUI::lastKnownTransform = thiz->GetTransform();
-    GUI::lastKnownVelocity = thiz->GetVelocityWR(stateManager);
-    GUI::lastKnownAngularVelocity = thiz->GetAngularVelocityWR(stateManager);
+    GUI::lastKnownVelocity = *thiz->GetVelocityWR(stateManager);
+    GUI::lastKnownAngularVelocity = *thiz->GetAngularVelocityWR(stateManager);
 //    GUI::lastKnownInput = input;
 //    GUI::hasInput = true;
   }
