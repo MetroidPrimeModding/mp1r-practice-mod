@@ -12,6 +12,12 @@ namespace GUI {
   CFinalInput lastKnownInput;
   double igt;
 
+  EPlayerMovementState moveState;
+  uint32_t bombJumpState;
+  uint32_t isInHalfPipeMode;
+  uint32_t isInHalfPipeModeInAir;
+  uint32_t touchedHalfPipeRecently;
+
   void drawInput(CFinalInput &p1);
   void drawPos();
   void drawVelocity();
@@ -25,27 +31,30 @@ namespace GUI {
     ImGui::Text("%02d:%02d:%02d.%03d", hours, minutes, seconds, ms);
   }
 
+  void drawMoveState();
+
   void drawMonitorWindow() {
     if (!PATCH_CONFIG.OSD_showMonitor) {
       return;
     }
     {
-      ImGui::SetNextWindowPos(ImVec2(630, 10), ImGuiCond_Once, ImVec2(1, 0));
+      ImGui::SetNextWindowPos(ImVec2(200, 10), ImGuiCond_FirstUseEver);
       ImGui::Begin(
           "Monitor", nullptr,
           ImGuiWindowFlags_NoResize |
           ImGuiWindowFlags_AlwaysAutoResize |
           ImGuiWindowFlags_NoTitleBar |
-//          ImGuiWindowFlags_NoInputs |
-//          ImGuiWindowFlags_NoNavInputs |
-//          ImGuiWindowFlags_NoNavFocus |
-//          ImGuiWindowFlags_NoNav |
+          //          ImGuiWindowFlags_NoInputs |
+          //          ImGuiWindowFlags_NoNavInputs |
+          //          ImGuiWindowFlags_NoNavFocus |
+          //          ImGuiWindowFlags_NoNav |
           ImGuiWindowFlags_NoFocusOnAppearing |
-//          ImGuiWindowFlags_NoMove |
-//          ImGuiWindowFlags_NoDecoration |
+          //          ImGuiWindowFlags_NoMove |
+          //          ImGuiWindowFlags_NoDecoration |
           //        ImGuiWindowFlags_NoBackground |
           ImGuiFocusedFlags_None
       );
+
       if (PATCH_CONFIG.OSD_showIGT) {
         drawIGT();
       }
@@ -55,6 +64,9 @@ namespace GUI {
       }
       if (PATCH_CONFIG.OSD_showVelocity) {
         drawVelocity();
+      }
+      if (PATCH_CONFIG.OSD_showMoveState) {
+        drawMoveState();
       }
 //      if (SETTINGS.OSD_showRotationalVelocity) {
 //        drawRotationalVelocity();
@@ -67,6 +79,22 @@ namespace GUI {
 //      }
 
       ImGui::End();
+    }
+  }
+
+  void drawMoveState() {
+    ImGui::Text("%s (%d)", stateToName(moveState), (uint32_t) moveState);
+    if (isInHalfPipeMode) {
+      ImGui::SameLine();
+      ImGui::Text(" half pipe");
+    }
+    if (isInHalfPipeModeInAir) {
+      ImGui::SameLine();
+      ImGui::Text(" in air");
+    }
+    if (touchedHalfPipeRecently) {
+      ImGui::SameLine();
+      ImGui::Text(" recently");
     }
   }
 
@@ -109,17 +137,17 @@ namespace GUI {
   }
 
   void drawInput(CFinalInput &p1) {
-    if (!PATCH_CONFIG.show_input) return;
-    ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_Once, ImVec2(0, 0));
+    if (!PATCH_CONFIG.OSD_show_input) return;
+    ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_FirstUseEver, ImVec2(0, 0));
     ImGui::Begin(
         "Input", nullptr,
         ImGuiWindowFlags_NoResize |
         ImGuiWindowFlags_AlwaysAutoResize |
         ImGuiWindowFlags_NoTitleBar |
-//        ImGuiWindowFlags_NoInputs |
-//        ImGuiWindowFlags_NoNavInputs |
-//        ImGuiWindowFlags_NoNavFocus |
-//        ImGuiWindowFlags_NoNav |
+        //        ImGuiWindowFlags_NoInputs |
+        //        ImGuiWindowFlags_NoNavInputs |
+        //        ImGuiWindowFlags_NoNavFocus |
+        //        ImGuiWindowFlags_NoNav |
         ImGuiWindowFlags_NoFocusOnAppearing |
         ImGuiWindowFlags_NoDecoration |
         ImGuiWindowFlags_NoBackground |

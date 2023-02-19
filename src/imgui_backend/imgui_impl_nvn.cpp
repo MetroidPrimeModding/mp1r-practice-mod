@@ -11,7 +11,8 @@
 #include "helpers/InputHelper.h"
 #include "MemoryPoolMaker.h"
 
-#include "shader/imgui_shader.h"
+#include "files/imgui_shader.h"
+#include "files/JetBrainsMonoNL-Regular.h"
 #include "init.h"
 
 #define UBOSIZE 0x1000
@@ -452,7 +453,12 @@ namespace ImguiNvnBackend {
     bd->cmdBuf = initInfo.cmdBuf;
     bd->isInitialized = false;
 
-    io.Fonts->AddFontDefault();
+
+    ImFontConfig fontCfg;
+    io.Fonts->AddFontFromMemoryCompressedTTF(
+        JetBrainsMonoNL_compressed_data, JetBrainsMonoNL_compressed_size,
+        18.f
+    );
 
     if (createShaders()) {
       Logger::log("Shader Binaries Loaded! Setting up Render Data.\n");
@@ -638,6 +644,8 @@ namespace ImguiNvnBackend {
       Logger::log("Cannot Draw Data! Buffers are not Ready.\n");
       return;
     }
+
+    orthoRH_ZO(projMatrix, 0.0f, io.DisplaySize.x, io.DisplaySize.y, 0.0f, -1.0f, 1.0f);
 
     bd->cmdBuf->BeginRecording(); // start recording our commands to the cmd buffer
 

@@ -53,6 +53,12 @@ HOOK_DEFINE_TRAMPOLINE(CPlayer_ProcessInput) {
     auto *gameState = stateManager.GameState();
     GUI::igt = gameState->GetPlayTime();
 
+    GUI::moveState = thiz->GetMoveState();
+    GUI::bombJumpState = thiz->GetMorphBall()->GetBombJumpState();
+    GUI::isInHalfPipeMode = thiz->GetMorphBall()->GetIsInHalfPipeMode();
+    GUI::isInHalfPipeModeInAir = thiz->GetMorphBall()->GetIsInHalfPipeModeInAir();
+    GUI::touchedHalfPipeRecently = thiz->GetMorphBall()->GetTouchedHalfPipeRecently();
+
     if (GUI::hasDesiredPositionData) {
       GUI::hasDesiredPositionData = false;
       thiz->SetTransform(GUI::desiredTransform);

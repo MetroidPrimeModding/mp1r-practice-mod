@@ -130,8 +130,8 @@ namespace GUI {
 //    *player->GetVelocity() = savedVelocity;
 //    *player->GetAngularVelocity() = savedAngularVelocity;
     desiredTransform = savedPos;
-    desiredVelocity = {0,0,0};
-    desiredAngularVelocity = {0,0,0};
+    desiredVelocity = {0, 0, 0};
+    desiredAngularVelocity = {0, 0, 0};
     hasDesiredPositionData = true;
   }
 
