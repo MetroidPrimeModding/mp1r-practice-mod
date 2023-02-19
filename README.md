@@ -2,7 +2,7 @@
 
 MP1 remastered practice mod
 
-Installation instructions:
+## Installation instructions:
 
 Download the latest release from [the releases page](https://github.com/MetroidPrimeModding/mp1r-practice-mod/releases).
 
@@ -12,7 +12,7 @@ Put the files from the zip in the following location:
 - atmosphere (modded switch): 
   - `atmosphere/contents/010012101468C000/exefs`
 
-Controls:
+## Controls:
 - Open menu: `Left stick + right stick click`
 - Save position: `R + ZR + D-Down` or `Right stick click + D-Down`
 - Load position: `R + ZR + D-Up` or `Right stick click + D-Up`
