@@ -4,6 +4,9 @@
 #include "nlohmann/json_fwd.hpp"
 
 struct PatchConfig {
+  // NOT SAVED
+  bool invulnerable = false;
+
   bool dash_enabled = false;
   bool pos_edit = true;
 
