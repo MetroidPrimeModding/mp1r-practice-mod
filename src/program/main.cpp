@@ -66,13 +66,14 @@ void drawDebugWindow() {
 
     if (ImGui::TreeNode("Settings")) {
       REQ_CONFIG_IF(ImGui::Checkbox("Show input", &PATCH_CONFIG.OSD_showInput));
+
       REQ_CONFIG_IF(ImGui::Checkbox("Show monitor window", &PATCH_CONFIG.OSD_showMonitor));
       REQ_CONFIG_IF(ImGui::Checkbox("Show IGT", &PATCH_CONFIG.OSD_showIGT));
       REQ_CONFIG_IF(ImGui::Checkbox("Show position", &PATCH_CONFIG.OSD_showPos));
       REQ_CONFIG_IF(ImGui::Checkbox("Show velocity", &PATCH_CONFIG.OSD_showVelocity));
       REQ_CONFIG_IF(ImGui::Checkbox("Show movement state", &PATCH_CONFIG.OSD_showMoveState));
 
-      REQ_CONFIG_IF(ImGui::Checkbox("Toggle Skippable Cutscene Override", &CGameState::mCinematicForceSkippableOverride));
+      REQ_CONFIG_IF(ImGui::Checkbox("Allow skipping all cutscenes", &CGameState::mCinematicForceSkippableOverride));
 
       ImGui::TreePop();
     }

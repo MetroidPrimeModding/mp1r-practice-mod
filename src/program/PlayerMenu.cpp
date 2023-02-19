@@ -43,6 +43,8 @@ namespace GUI {
     ImGuiSliderFlags flags = ImGuiSliderFlags_None
                              | ImGuiSliderFlags_NoRoundToFormat;
     if (ImGui::TreeNode("Player")) {
+      ImGui::Checkbox("Invulnerable", &PATCH_CONFIG.invulnerable);
+
       ImGui::Text("Saved position:");
       ImGui::Text("%3.4f %3.4f %3.4f", savedPos.x, savedPos.y, savedPos.z);
       if (ImGui::Button("Save")) {

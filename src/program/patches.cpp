@@ -123,6 +123,11 @@ HOOK_DEFINE_TRAMPOLINE(CPlayer_ProcessInput) {
     GUI::lastKnownAngularVelocity = *thiz->GetAngularVelocityWR(stateManager);
 //    GUI::lastKnownInput = input;
 //    GUI::hasInput = true;
+
+    if (PATCH_CONFIG.invulnerable) {
+      int etanks = CStateManagerGameLogicMP1::PlayerState()->GetItemCapacity(CPlayerStateMP1::EItemType::EnergyTanks);
+      thiz->HealthInfo(stateManager).heatlh = (float)etanks * 100.0f + 99.0f;
+    }
   }
 };
 
