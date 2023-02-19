@@ -7,12 +7,19 @@
 #include "PlayerMenu.hpp"
 #include "InputWindow.hpp"
 #include "helpers/InputHelper.h"
+#include "imgui.h"
+#include "nlohmann/json.hpp"
+#include "helpers/fsHelper.h"
+#include "init.h"
 
 namespace patch = exl::patch;
 namespace inst = exl::armv8::inst;
 namespace reg = exl::armv8::reg;
+using namespace nlohmann;
 
 PatchConfig PATCH_CONFIG{};
+CStateManager *mostRecentStateManager;
+
 
 HOOK_DEFINE_INLINE(Dash_ScanVisorCheck) {
   static void Callback(exl::hook::InlineCtx *ctx) {
@@ -44,8 +51,6 @@ HOOK_DEFINE_INLINE(CheckFloatVar) {
 //    Logger::log("CheckFloatVar: %f\n", ctx->S[1], offsetof(exl::hook::InlineCtx, m_Fpr));
   }
 };
-
-CStateManager *mostRecentStateManager;
 
 HOOK_DEFINE_TRAMPOLINE(CPlayer_ProcessInput) {
   static void Callback(CPlayerMP1 *thiz, const CFinalInput &input, CStateManager &stateManager) {
@@ -130,6 +135,8 @@ HOOK_DEFINE_TRAMPOLINE(CStateManagerGameLogicMP1_GameMainLoop) {
   }
 };
 
+
+
 void runCodePatches() {
 //  Dash_ScanVisorCheck::InstallAtOffset(0xceeab0ull);
 //  Dash_ScanVisorCheck::InstallAtOffset(0xceeac4ull);
@@ -142,4 +149,92 @@ void runCodePatches() {
 
   CPlayer_ProcessInput::InstallAtOffset(0xc70334ull);
   CStateManagerGameLogicMP1_GameMainLoop::InstallAtOffset(0xc5bc4cull);
+}
+
+void PatchConfig::loadConfig() {
+  FsHelper::LoadData loadData = {
+      .path = "sd:/mp1r/settings.json"
+  };
+
+  if (FsHelper::tryLoadFileFromPath(loadData)) {
+    Logger::log("Loaded settings.json\n");
+
+    std::string jsonStr((const char*)loadData.buffer, loadData.bufSize);
+    json save = json::parse(jsonStr, nullptr, false);
+    if (!save.is_discarded()) {
+      loadFromJson(save);
+    } else {
+      Logger::log("Failed to parse settings.json\n");
+    }
+    nn::init::GetAllocator()->Free(loadData.buffer);
+  } else {
+    Logger::log("Failed to load settings.json\n");
+  }
+}
+
+void PatchConfig::saveConfig() {
+  json save = createSaveJson();
+
+  std::string dump = save.dump(2);
+
+  if (FsHelper::createDirectory("sd:/mp1r/") != 0) {
+    this->requestConfigSave = false;
+    return;
+  }
+
+  bool saved = FsHelper::writeFileToPath(dump.c_str(), dump.length(), "sd:/mp1r/settings.json");
+  if (saved != 0) {
+    Logger::log("Failed to save settings.json\n");
+  }
+  requestConfigSave = false;
+}
+
+void PatchConfig::loadFromJson(const json &json) {
+  dash_enabled = json["dash_enabled"];
+  pos_edit = json["pos_edit"];
+
+  OSD_showInput = json["OSD_showInput"];
+
+  OSD_showMonitor = json["OSD_showMonitor"];
+  OSD_showIGT = json["OSD_showIGT"];
+  OSD_showPos = json["OSD_showPos"];
+  OSD_showVelocity = json["OSD_showVelocity"];
+  OSD_showMoveState = json["OSD_showMoveState"];
+
+  menuX = json["menuX"];
+  menuY = json["menuY"];
+}
+
+
+json PatchConfig::createSaveJson() {
+  json save;
+  save["dash_enabled"] = dash_enabled;
+  save["pos_edit"] = pos_edit;
+
+  save["OSD_showInput"] = OSD_showInput;
+
+  save["OSD_showMonitor"] = OSD_showMonitor;
+  save["OSD_showIGT"] = OSD_showIGT;
+  save["OSD_showPos"] = OSD_showPos;
+  save["OSD_showVelocity"] = OSD_showVelocity;
+  save["OSD_showMoveState"] = OSD_showMoveState;
+
+  save["menuX"] = menuX;
+  save["menuY"] = menuY;
+  return save;
+}
+
+constexpr float DEBOUNCE_TIME = 2.0f;
+
+void PatchConfig::RequestConfigSave() {
+//  Logger::log("Requesting config save");
+  requestConfigSave = true;
+  requestSaveDebounce = ImGui::GetTime();
+}
+
+bool PatchConfig::ShouldSave() {
+//  if (requestConfigSave) {
+//    Logger::log("ShouldSave: %d, %f, %f\n", requestConfigSave, ImGui::GetTime(), requestSaveDebounce);
+//  }
+  return requestConfigSave && ImGui::GetTime() > requestSaveDebounce + 2.0f;
 }

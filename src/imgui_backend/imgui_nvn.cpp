@@ -30,6 +30,7 @@ bool hasInitImGui = false;
 
 namespace nvnImGui {
   ImVector<ProcDrawFunc> drawQueue;
+  ImVector<InitFunc> initQueue;
 }
 
 #define IMGUI_USEEXAMPLE_DRAW false
@@ -213,6 +214,12 @@ void nvnImGui::addDrawFunc(ProcDrawFunc func) {
   drawQueue.push_back(func);
 }
 
+void nvnImGui::addInitFunc(InitFunc func) {
+  EXL_ASSERT(!initQueue.contains(func), "Function has already been added to queue!");
+
+  initQueue.push_back(func);
+}
+
 void nvnImGui::procDraw() {
 
   ImguiNvnBackend::newFrame();
@@ -281,6 +288,10 @@ bool nvnImGui::InitImGui() {
 
     InputHelper::setPort(0); // set input helpers default port to zero
 
+
+    for (auto init: initQueue) {
+      init();
+    }
 
 #if IMGUI_USEEXAMPLE_DRAW
     addDrawFunc([]() {ImGui::ShowDemoWindow();});

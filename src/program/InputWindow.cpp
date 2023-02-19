@@ -137,7 +137,7 @@ namespace GUI {
   }
 
   void drawInput(CFinalInput &p1) {
-    if (!PATCH_CONFIG.OSD_show_input) return;
+    if (!PATCH_CONFIG.OSD_showInput) return;
     ImGui::SetNextWindowPos(ImVec2(10, 10), ImGuiCond_FirstUseEver, ImVec2(0, 0));
     ImGui::Begin(
         "Input", nullptr,

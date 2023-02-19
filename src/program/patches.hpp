@@ -1,16 +1,34 @@
 #pragma once
 
 #include "lib.hpp"
+#include "nlohmann/json_fwd.hpp"
 
 struct PatchConfig {
-  bool dash_enabled: 1 = false;
-  bool OSD_show_input: 1 = true;
-  bool pos_edit: 1 = true;
-  bool OSD_showMonitor:1 = true;
-  bool OSD_showIGT: 1 = true;
-  bool OSD_showPos: 1 = true;
-  bool OSD_showVelocity: 1 = true;
-  bool OSD_showMoveState: 1 = false;
+  bool dash_enabled = false;
+  bool pos_edit = true;
+
+  bool OSD_showInput = true;
+
+  bool OSD_showMonitor = true;
+  bool OSD_showIGT = true;
+  bool OSD_showPos = true;
+  bool OSD_showVelocity = true;
+  bool OSD_showMoveState = false;
+
+  float menuX = 10.f;
+  float menuY = 150.f;
+
+  void RequestConfigSave();
+  bool ShouldSave();
+
+  void loadConfig();
+  void saveConfig();
+
+private:
+  void loadFromJson(const nlohmann::json &json);
+  nlohmann::json createSaveJson();
+  bool requestConfigSave;
+  double requestSaveDebounce;
 };
 
 extern PatchConfig PATCH_CONFIG;
@@ -19,3 +37,4 @@ class CStateManager;
 extern CStateManager* mostRecentStateManager;
 
 void runCodePatches();
+

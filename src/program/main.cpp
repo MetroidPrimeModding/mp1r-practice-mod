@@ -1,3 +1,4 @@
+#include <cmath>
 #include "lib.hpp"
 #include "imgui_backend/imgui_impl_nvn.hpp"
 #include "patches.hpp"
@@ -26,7 +27,6 @@
     }                                                                                                                  \
   }
 
-ImVec2 lastWindowPos = ImVec2(10, 150);
 bool wasJustOpened = false;
 
 void drawDebugWindow() {
@@ -35,7 +35,7 @@ void drawDebugWindow() {
   if (InputHelper::isInputToggled()) {
     if (!wasJustOpened) {
       wasJustOpened = true;
-      ImGui::SetNextWindowPos(lastWindowPos, ImGuiCond_None);
+      ImGui::SetNextWindowPos(ImVec2(PATCH_CONFIG.menuX, PATCH_CONFIG.menuY), ImGuiCond_None);
       ImGui::SetNextWindowFocus();
     }
   } else {
@@ -45,18 +45,24 @@ void drawDebugWindow() {
   if (ImGui::Begin("Practice Mod", nullptr, ImGuiWindowFlags_AlwaysAutoResize)) {
     auto pos = ImGui::GetWindowPos();
     if (pos.x >= 0) {
-      lastWindowPos = pos;
+      float dX = fabs(PATCH_CONFIG.menuX - pos.x);
+      float dY = fabs(PATCH_CONFIG.menuY - pos.y);
+
+      PATCH_CONFIG.menuX = pos.x;
+      PATCH_CONFIG.menuY = pos.y;
+      if (dX > 0.01f || dY > 0.01f) {
+        PATCH_CONFIG.RequestConfigSave();
+      }
     }
 //  ImGui::SetWindowSize(ImVec2(200, 100), ImGuiCond_FirstUseEver);
 
     if (ImGui::TreeNode("Settings")) {
-      BITFIELD_CHECKBOX("Show input", PATCH_CONFIG.OSD_show_input);
-      BITFIELD_CHECKBOX("Show monitor window", PATCH_CONFIG.OSD_showMonitor);
-      BITFIELD_CHECKBOX("Show IGT", PATCH_CONFIG.OSD_showIGT);
-      BITFIELD_CHECKBOX("Show position", PATCH_CONFIG.OSD_showPos);
-      BITFIELD_CHECKBOX("Show velocity", PATCH_CONFIG.OSD_showVelocity);
-      BITFIELD_CHECKBOX("Show movement state", PATCH_CONFIG.OSD_showMoveState);
-
+      BITFIELD_CHECKBOX("Show input", PATCH_CONFIG.OSD_showInput, PATCH_CONFIG.RequestConfigSave(););
+      BITFIELD_CHECKBOX("Show monitor window", PATCH_CONFIG.OSD_showMonitor, PATCH_CONFIG.RequestConfigSave(););
+      BITFIELD_CHECKBOX("Show IGT", PATCH_CONFIG.OSD_showIGT, PATCH_CONFIG.RequestConfigSave(););
+      BITFIELD_CHECKBOX("Show position", PATCH_CONFIG.OSD_showPos, PATCH_CONFIG.RequestConfigSave(););
+      BITFIELD_CHECKBOX("Show velocity", PATCH_CONFIG.OSD_showVelocity, PATCH_CONFIG.RequestConfigSave(););
+      BITFIELD_CHECKBOX("Show movement state", PATCH_CONFIG.OSD_showMoveState, PATCH_CONFIG.RequestConfigSave(););
 
 //      BITFIELD_CHECKBOX("Toggle MP1 dash", PATCH_CONFIG.dash_enabled);
       ImGui::Checkbox("Toggle Skippable Cutscene Override", &CGameState::mCinematicForceSkippableOverride);
@@ -74,6 +80,14 @@ void drawDebugWindow() {
 
   GUI::drawInputWindow();
   GUI::drawMonitorWindow();
+
+  if (PATCH_CONFIG.ShouldSave()) {
+    PATCH_CONFIG.saveConfig();
+  }
+}
+
+void init() {
+  PATCH_CONFIG.loadConfig();
 }
 
 extern "C" void exl_main(void *x0, void *x1) {
@@ -89,11 +103,9 @@ extern "C" void exl_main(void *x0, void *x1) {
   runCodePatches();
 
   // ImGui Hooks
-#if IMGUI_ENABLED
+  nvnImGui::addInitFunc(init);
   nvnImGui::InstallHooks();
-
   nvnImGui::addDrawFunc(drawDebugWindow);
-#endif
 
   CGameState::mCinematicForceSkippableOverride = true;
 }

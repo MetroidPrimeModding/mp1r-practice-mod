@@ -27,6 +27,7 @@ include_directories(${PROJECT_SOURCE_DIR}/src_framework/)
 
 include_directories(${PROJECT_SOURCE_DIR}/src)
 include_directories(${PROJECT_SOURCE_DIR}/extern/imgui)
+include_directories(${PROJECT_SOURCE_DIR}/extern/json/include)
 
 file(GLOB_RECURSE SOURCES_ASM
         ${PROJECT_SOURCE_DIR}/src/*.s

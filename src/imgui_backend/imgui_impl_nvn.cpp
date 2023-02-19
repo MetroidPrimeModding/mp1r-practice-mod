@@ -47,6 +47,8 @@ void orthoRH_ZO(Matrix44f &Result, float left, float right, float bottom, float 
 }
 
 namespace ImguiNvnBackend {
+  void loadIni();
+  void saveIni();
 
   // doesnt get used anymore really, as back when it was needed i had a simplified shader to test with, but now I just test with the actual imgui shader
   void initTestShader() {
@@ -453,8 +455,6 @@ namespace ImguiNvnBackend {
     bd->cmdBuf = initInfo.cmdBuf;
     bd->isInitialized = false;
 
-
-    ImFontConfig fontCfg;
     io.Fonts->AddFontFromMemoryCompressedTTF(
         JetBrainsMonoNL_compressed_data, JetBrainsMonoNL_compressed_size,
         18.f
@@ -475,6 +475,8 @@ namespace ImguiNvnBackend {
         Logger::log("Failed to Setup Render Data!\n");
       }
     }
+
+    loadIni();
   }
 
   void ShutdownBackend() {
@@ -543,6 +545,10 @@ namespace ImguiNvnBackend {
     InputHelper::updatePadState(); // update input helper
 
     updateInput(); // update backend inputs
+
+    if (io.WantSaveIniSettings) {
+      saveIni();
+    }
   }
 
   void setRenderStates() {
@@ -727,4 +733,33 @@ namespace ImguiNvnBackend {
     bd->queue->SubmitCommands(1, &handle);
   }
 
+  void loadIni() {
+      FsHelper::LoadData loadData = {
+          .path = "sd:/mp1r/imgui.ini"
+      };
+
+      if (FsHelper::tryLoadFileFromPath(loadData)) {
+        Logger::log("Loaded imgui.ini\n");
+        ImGui::LoadIniSettingsFromMemory(static_cast<const char *>(loadData.buffer), loadData.bufSize);
+        nn::init::GetAllocator()->Free(loadData.buffer);
+      } else {
+        Logger::log("Failed to load imgui.ini\n");
+      }
+  }
+
+  void saveIni() {
+    size_t size;
+    const char *ini = ImGui::SaveIniSettingsToMemory(&size);
+
+    if (FsHelper::createDirectory("sd:/mp1r/") != 0) {
+      ImGui::GetIO().WantSaveIniSettings = false;
+      return;
+    }
+
+    bool saved = FsHelper::writeFileToPath(ini, size, "sd:/mp1r/imgui.ini");
+    if (saved != 0) {
+      Logger::log("Failed to save imgui.ini\n");
+    }
+    ImGui::GetIO().WantSaveIniSettings = false;
+  }
 }

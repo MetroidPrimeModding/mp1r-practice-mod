@@ -4,3 +4,6 @@
 [submodule "extern/exlaunch"]
 	path = extern/exlaunch
 	url = https://github.com/shadowninja108/exlaunch.git
+[submodule "extern/json"]
+	path = extern/json
+	url = https://github.com/nlohmann/json.git
