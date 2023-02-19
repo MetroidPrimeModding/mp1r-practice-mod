@@ -87,16 +87,14 @@ bool InputHelper::tryGetContState(nn::hid::NpadBaseState *state, ulong port) {
   isReadInput = true;
   bool result = true;
 
+  nn::hid::GetNpadState((nn::hid::NpadFullKeyState *) state, port);
+
   if (styleSet.isBitSet(nn::hid::NpadStyleTag::NpadStyleFullKey)) {
     nn::hid::GetNpadState((nn::hid::NpadFullKeyState *) state, port);
   } else if (styleSet.isBitSet(nn::hid::NpadStyleTag::NpadStyleHandheld)) {
     nn::hid::GetNpadState((nn::hid::NpadHandheldState *) state, port);
   } else if (styleSet.isBitSet(nn::hid::NpadStyleTag::NpadStyleJoyDual)) {
     nn::hid::GetNpadState((nn::hid::NpadJoyDualState *) state, port);
-  } else if (styleSet.isBitSet(nn::hid::NpadStyleTag::NpadStyleJoyLeft)) {
-    nn::hid::GetNpadState((nn::hid::NpadJoyLeftState *) state, port);
-  } else if (styleSet.isBitSet(nn::hid::NpadStyleTag::NpadStyleJoyRight)) {
-    nn::hid::GetNpadState((nn::hid::NpadJoyRightState *) state, port);
   } else {
     result = false;
   }
