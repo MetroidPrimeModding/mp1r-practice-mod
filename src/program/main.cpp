@@ -15,6 +15,11 @@
 #include "PlayerMenu.hpp"
 #include "ProductionFlagMenu.hpp"
 #include "InputWindow.hpp"
+#include "helpers/fsHelper.h"
+#include "init.h"
+#include "prime/CLZSSCompressor.hpp"
+#include <utility>
+
 
 #define IMGUI_ENABLED true
 
@@ -94,8 +99,51 @@ void drawDebugWindow() {
   }
 }
 
+void compress(const char* srcName) {
+  Logger::log("Trying to compress %s", srcName);
+  std::string path = "sd:/mp1r/" + std::string(srcName);
+  FsHelper::LoadData loadData = {
+      .path = path.c_str(),
+  };
+
+  auto compress_fns = {
+      std::make_pair(".c8", CLZSSCompressor::CompressBuffer8),
+      std::make_pair(".c8_3Byte", CLZSSCompressor::CompressBuffer8_3Byte),
+      std::make_pair(".c16", CLZSSCompressor::CompressBuffer16),
+      std::make_pair(".c16_3Byte", CLZSSCompressor::CompressBuffer16_3Byte),
+      std::make_pair(".c32", CLZSSCompressor::CompressBuffer32),
+      std::make_pair(".c32_3Byte", CLZSSCompressor::CompressBuffer32_3Byte),
+  };
+
+  if (FsHelper::tryLoadFileFromPath(loadData)) {
+    unsigned int compressed_size = 0;
+    auto *buff = static_cast<unsigned char *>(nn::init::GetAllocator()->Allocate(loadData.bufSize));
+    for (auto pair : compress_fns) {
+      auto compress = pair.second;
+      bool result = compress(static_cast<const unsigned char *>(loadData.buffer), loadData.bufSize, loadData.bufSize, buff, compressed_size);
+      if (!result) {
+        Logger::log("Failed to %s", pair.first);
+      } else if (compressed_size > loadData.bufSize) {
+        Logger::log("Bad compressed size");
+      } else {
+        std::string outpath = path + std::string(pair.first);
+        FsHelper::writeFileToPath(buff, compressed_size, outpath.c_str());
+      }
+    }
+    nn::init::GetAllocator()->Free(buff);
+    nn::init::GetAllocator()->Free(loadData.buffer);
+  }
+}
+
 void init() {
   PATCH_CONFIG.loadConfig();
+
+  compress("zeros.bin");
+  compress("random.bin");
+  compress("romeo_and_juliet.txt");
+  compress("settings.json");
+  compress("imgui.ini");
+  compress("main.cpp");
 }
 
 extern "C" void exl_main(void *x0, void *x1) {
