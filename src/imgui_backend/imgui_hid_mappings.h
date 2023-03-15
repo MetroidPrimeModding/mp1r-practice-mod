@@ -4,8 +4,8 @@
 #include "nn/hid.h"
 
 constexpr int npad_mapping[][2] = {
-    {ImGuiKey_GamepadFaceDown,    static_cast<const int>(nn::hid::NpadButton::B)},
-    {ImGuiKey_GamepadFaceRight,   static_cast<const int>(nn::hid::NpadButton::A)},
+    {ImGuiKey_GamepadFaceDown,    static_cast<const int>(nn::hid::NpadButton::A)},
+    {ImGuiKey_GamepadFaceRight,   static_cast<const int>(nn::hid::NpadButton::B)},
     {ImGuiKey_GamepadFaceUp,      static_cast<const int>(nn::hid::NpadButton::X)},
     {ImGuiKey_GamepadFaceLeft,    static_cast<const int>(nn::hid::NpadButton::Y)},
     {ImGuiKey_GamepadL1,          static_cast<const int>(nn::hid::NpadButton::L)},
