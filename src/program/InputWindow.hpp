@@ -7,8 +7,8 @@
 #include <cstdint>
 
 namespace GUI {
-  extern bool hasInput;
-  extern CFinalInput lastKnownInput;
+  extern int framesSincePlayerInput;
+  extern CFinalInput lastKnownCPlayerInput;
   extern double igt;
 
   extern EPlayerMovementState moveState;

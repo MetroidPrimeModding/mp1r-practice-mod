@@ -66,6 +66,7 @@ void drawDebugWindow() {
 
     if (ImGui::TreeNode("Settings")) {
       REQ_CONFIG_IF(ImGui::Checkbox("Show input", &PATCH_CONFIG.OSD_showInput));
+      REQ_CONFIG_IF(ImGui::SliderFloat("Input scale", &PATCH_CONFIG.OSD_inputScale, 0.5f, 10.f, "%.1f"));
 
       REQ_CONFIG_IF(ImGui::Checkbox("Show monitor window", &PATCH_CONFIG.OSD_showMonitor));
       REQ_CONFIG_IF(ImGui::Checkbox("Show IGT", &PATCH_CONFIG.OSD_showIGT));

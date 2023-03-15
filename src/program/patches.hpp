@@ -11,6 +11,7 @@ struct PatchConfig {
   bool pos_edit = true;
 
   bool OSD_showInput = true;
+  float OSD_inputScale = 1.5f;
 
   bool OSD_showMonitor = true;
   bool OSD_showIGT = true;

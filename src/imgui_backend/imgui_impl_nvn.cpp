@@ -519,6 +519,16 @@ namespace ImguiNvnBackend {
       else if (InputHelper::isButtonRelease((nn::hid::NpadButton) nx_k))
         io.AddKeyEvent((ImGuiKey) im_k, false);
     }
+
+    io.AddKeyAnalogEvent(ImGuiKey_GamepadLStickLeft, InputHelper::getLeftStickLeft() > 0.8f, InputHelper::getLeftStickLeft());
+    io.AddKeyAnalogEvent(ImGuiKey_GamepadLStickRight, InputHelper::getLeftStickRight() > 0.8f, InputHelper::getLeftStickRight());
+    io.AddKeyAnalogEvent(ImGuiKey_GamepadLStickUp, InputHelper::getLeftStickUp() > 0.8f, InputHelper::getLeftStickUp());
+    io.AddKeyAnalogEvent(ImGuiKey_GamepadLStickDown, InputHelper::getLeftStickDown() > 0.8f, InputHelper::getLeftStickDown());
+
+    io.AddKeyAnalogEvent(ImGuiKey_GamepadRStickLeft, InputHelper::getRightStickLeft() > 0.8f, InputHelper::getRightStickLeft());
+    io.AddKeyAnalogEvent(ImGuiKey_GamepadRStickRight, InputHelper::getRightStickRight() > 0.8f, InputHelper::getRightStickRight());
+    io.AddKeyAnalogEvent(ImGuiKey_GamepadRStickUp, InputHelper::getRightStickUp() > 0.8f, InputHelper::getRightStickUp());
+    io.AddKeyAnalogEvent(ImGuiKey_GamepadRStickDown, InputHelper::getRightStickDown() > 0.8f, InputHelper::getRightStickDown());
   }
 
   void updateInput() {

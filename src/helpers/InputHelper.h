@@ -129,15 +129,35 @@ public:
 
   static bool isHoldRightStick() { return isButtonHold(nn::hid::NpadButton::StickR); }
 
+  static bool isHoldPlus() { return isButtonHold(nn::hid::NpadButton::Plus); }
+
+  static bool isPressPlus() { return isButtonPress(nn::hid::NpadButton::Plus); }
+
+  static bool isReleasePlus() { return isButtonRelease(nn::hid::NpadButton::Plus); }
+
+  static bool isHoldMinus() { return isButtonHold(nn::hid::NpadButton::Minus); }
+
+  static bool isPressMinus() { return isButtonPress(nn::hid::NpadButton::Minus); }
+
+  static bool isReleaseMinus() { return isButtonRelease(nn::hid::NpadButton::Minus); }
+
   // analog
 
   static float getLeftStickX() { return ((float) curControllerState.mAnalogStickL.X) / 32768.f; }
-
   static float getLeftStickY() { return ((float) curControllerState.mAnalogStickL.Y) / 32768.f; }
+  static float getLeftStickLeft() { float x = getLeftStickX(); return x < 0 ? -x : 0; }
+  static float getLeftStickRight() { float x = getLeftStickX(); return x > 0 ? x : 0; }
+  static float getLeftStickUp() { float y = getLeftStickY(); return y > 0 ? y : 0; }
+  static float getLeftStickDown() { float y = getLeftStickY(); return y < 0 ? -y : 0; }
 
   static float getRightStickX() { return ((float) curControllerState.mAnalogStickR.X) / 32768.f; }
-
   static float getRightStickY() { return ((float) curControllerState.mAnalogStickR.Y) / 32768.f; }
+  static float getRightStickLeft() { float x = getRightStickX(); return x < 0 ? -x : 0; }
+  static float getRightStickRight() { float x = getRightStickX(); return x > 0 ? x : 0; }
+  static float getRightStickUp() { float y = getRightStickY(); return y > 0 ? y : 0; }
+  static float getRightStickDown() { float y = getRightStickY(); return y < 0 ? -y : 0; }
+
+
 
 
 private:

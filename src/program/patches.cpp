@@ -118,11 +118,13 @@ HOOK_DEFINE_TRAMPOLINE(CPlayer_ProcessInput) {
 
     Orig(thiz, input, stateManager);
 
+    GUI::lastKnownCPlayerInput = input;
+    GUI::framesSincePlayerInput = 0;
     GUI::lastKnownTransform = thiz->GetTransform();
     GUI::lastKnownVelocity = *thiz->GetVelocityWR(stateManager);
     GUI::lastKnownAngularVelocity = *thiz->GetAngularVelocityWR(stateManager);
-//    GUI::lastKnownInput = input;
-//    GUI::hasInput = true;
+//    GUI::lastKnownCPlayerInput = input;
+//    GUI::framesSincePlayerInput = true;
 
     if (PATCH_CONFIG.invulnerable) {
       int etanks = CStateManagerGameLogicMP1::PlayerState()->GetItemCapacity(CPlayerStateMP1::EItemType::EnergyTanks);
@@ -130,16 +132,6 @@ HOOK_DEFINE_TRAMPOLINE(CPlayer_ProcessInput) {
     }
   }
 };
-
-HOOK_DEFINE_TRAMPOLINE(CStateManagerGameLogicMP1_GameMainLoop) {
-  static void Callback(void *thiz, CStateManager &mgr, void *updateAccess, float dt) {
-    Orig(thiz, mgr, updateAccess, dt);
-
-    GUI::lastKnownInput = *(CFinalInput *) ((size_t) thiz + 0x160);
-    GUI::hasInput = true;
-  }
-};
-
 
 
 void runCodePatches() {
@@ -153,7 +145,6 @@ void runCodePatches() {
 //  CheckFloatVar::InstallAtOffset(0xcee418ll);
 
   CPlayer_ProcessInput::InstallAtOffset(0xc70334ull);
-  CStateManagerGameLogicMP1_GameMainLoop::InstallAtOffset(0xc5bc4cull);
 }
 
 void PatchConfig::loadConfig() {
@@ -198,16 +189,17 @@ void PatchConfig::loadFromJson(const json &json) {
   dash_enabled = json["dash_enabled"];
   pos_edit = json["pos_edit"];
 
-  OSD_showInput = json["OSD_showInput"];
+  OSD_showInput = json.value("OSD_showInput", OSD_showInput);
+  OSD_inputScale = json.value("OSD_inputScale", OSD_inputScale);
 
-  OSD_showMonitor = json["OSD_showMonitor"];
-  OSD_showIGT = json["OSD_showIGT"];
-  OSD_showPos = json["OSD_showPos"];
-  OSD_showVelocity = json["OSD_showVelocity"];
-  OSD_showMoveState = json["OSD_showMoveState"];
+  OSD_showMonitor = json.value("OSD_showMonitor", OSD_showMonitor);
+  OSD_showIGT = json.value("OSD_showIGT", OSD_showIGT);
+  OSD_showPos = json.value("OSD_showPos", OSD_showPos);
+  OSD_showVelocity = json.value("OSD_showVelocity", OSD_showVelocity);
+  OSD_showMoveState = json.value("OSD_showMoveState", OSD_showMoveState);
 
-  menuX = json["menuX"];
-  menuY = json["menuY"];
+  menuX = json.value("menuX", menuX);
+  menuY = json.value("menuY", menuY);
 }
 
 
@@ -217,6 +209,7 @@ json PatchConfig::createSaveJson() {
   save["pos_edit"] = pos_edit;
 
   save["OSD_showInput"] = OSD_showInput;
+  save["OSD_inputScale"] = OSD_inputScale;
 
   save["OSD_showMonitor"] = OSD_showMonitor;
   save["OSD_showIGT"] = OSD_showIGT;
