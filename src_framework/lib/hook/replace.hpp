@@ -21,19 +21,20 @@ namespace exl::hook::impl {
             hook::Hook(util::modules::GetTargetStart() + address, Derived::Callback);
         }
 
-        template<typename R, typename ...A>
-        static ALWAYS_INLINE void InstallAtFuncPtr(util::GenericFuncPtr<R, A...> ptr) {
+        template<typename T>
+        static ALWAYS_INLINE void InstallAtFuncPtr(T ptr) {
             _HOOK_STATIC_CALLBACK_ASSERT();
+            using ArgFuncPtr = typename util::FuncPtrTraits<T>::CallbackType;
 
-            using ArgFuncPtr = decltype(ptr);
-            static_assert(std::is_same_v<ArgFuncPtr, CallbackFuncPtr<>>, "Argument pointer type must match callback type!");
+            static_assert(std::is_same_v<ArgFuncPtr, CallbackFuncPtr<>>,
+                          "Argument pointer type must match callback type!");
 
             hook::Hook(ptr, Derived::Callback);
         }
 
         static ALWAYS_INLINE void InstallAtPtr(uintptr_t ptr) {
             _HOOK_STATIC_CALLBACK_ASSERT();
-            
+
             hook::Hook(ptr, Derived::Callback);
         }
 
