@@ -22,6 +22,8 @@ struct PatchConfig {
   float menuX = 10.f;
   float menuY = 150.f;
 
+  bool hide_reticle = false;
+
   void RequestConfigSave();
   bool ShouldSave();
 

@@ -12,7 +12,7 @@ namespace exl::hook::impl {
 
     template<typename Derived>
     class TrampolineHook {
-            
+
         template<typename T = Derived>
         using CallbackFuncPtr = decltype(&T::Callback);
 
@@ -38,19 +38,20 @@ namespace exl::hook::impl {
             OrigRef() = hook::Hook(util::modules::GetTargetStart() + address, Derived::Callback, true);
         }
 
-        template<typename R, typename ...A>
-        static ALWAYS_INLINE void InstallAtFuncPtr(util::GenericFuncPtr<R, A...> ptr) {
+        template<typename T>
+        static ALWAYS_INLINE void InstallAtFuncPtr(T ptr) {
             _HOOK_STATIC_CALLBACK_ASSERT();
-            using ArgFuncPtr = decltype(ptr);
+            using ArgFuncPtr = typename util::FuncPtrTraits<T>::CallbackType;
 
-            static_assert(std::is_same_v<ArgFuncPtr, CallbackFuncPtr<>>, "Argument pointer type must match callback type!");
+            static_assert(std::is_same_v<ArgFuncPtr, CallbackFuncPtr<>>,
+                          "Argument pointer type must match callback type!");
 
             OrigRef() = hook::Hook(ptr, Derived::Callback, true);
         }
 
         static ALWAYS_INLINE void InstallAtPtr(uintptr_t ptr) {
             _HOOK_STATIC_CALLBACK_ASSERT();
-            
+
             OrigRef() = hook::Hook(ptr, Derived::Callback, true);
         }
 

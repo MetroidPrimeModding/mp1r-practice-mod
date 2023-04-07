@@ -4,6 +4,7 @@
 #include "InventoryMenu.hpp"
 #include "prime/CPlayerMP1.hpp"
 #include "prime/CFinalInput.hpp"
+#include "prime/CSamusHudMP1.hpp"
 #include "PlayerMenu.hpp"
 #include "InputWindow.hpp"
 #include "helpers/InputHelper.h"
@@ -52,7 +53,7 @@ HOOK_DEFINE_INLINE(CheckFloatVar) {
   }
 };
 
-HOOK_DEFINE_TRAMPOLINE(CPlayer_ProcessInput) {
+HOOK_DEFINE_TRAMPOLINE(CPlayerMP1_ProcessInput) {
   static void Callback(CPlayerMP1 *thiz, const CFinalInput &input, CStateManager &stateManager) {
     mostRecentStateManager = &stateManager;
     auto *gameState = stateManager.GameState();
@@ -133,6 +134,13 @@ HOOK_DEFINE_TRAMPOLINE(CPlayer_ProcessInput) {
   }
 };
 
+HOOK_DEFINE_TRAMPOLINE(CSamusHudMP1_DrawTargetingReticle) {
+  static void Callback(const CSamusHudMP1* self, const CStateManager& mgr) {
+    if (!PATCH_CONFIG.hide_reticle) {
+      Orig(self, mgr);
+    }
+  }
+};
 
 void runCodePatches() {
 //  Dash_ScanVisorCheck::InstallAtOffset(0xceeab0ull);
@@ -144,7 +152,8 @@ void runCodePatches() {
   // Uncomment this hook to cause physics to be ice
 //  CheckFloatVar::InstallAtOffset(0xcee418ll);
 
-  CPlayer_ProcessInput::InstallAtOffset(0xc70334ull);
+  CPlayerMP1_ProcessInput::InstallAtFuncPtr(&CPlayerMP1::ProcessInput);
+  CSamusHudMP1_DrawTargetingReticle::InstallAtFuncPtr(&CSamusHudMP1::DrawTargetingReticle);
 }
 
 void PatchConfig::loadConfig() {
@@ -200,6 +209,8 @@ void PatchConfig::loadFromJson(const json &json) {
 
   menuX = json.value("menuX", menuX);
   menuY = json.value("menuY", menuY);
+
+  hide_reticle = json.value("hide_reticle", false);
 }
 
 
@@ -219,6 +230,8 @@ json PatchConfig::createSaveJson() {
 
   save["menuX"] = menuX;
   save["menuY"] = menuY;
+
+  save["hide_reticle"] = hide_reticle;
   return save;
 }
 

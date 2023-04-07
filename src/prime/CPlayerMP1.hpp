@@ -48,9 +48,11 @@ public:
 //  inline float &GetB() const { return *GetField<float>(this, 0x4); }
 };
 
+class CFinalInput;
 class CPlayerMP1 : public CPhysicsActorMP1 {
 public:
   inline CMorphBallMP1 *GetMorphBall() { return *GetField<CMorphBallMP1*>(this, 0x9d0); }
   inline EPlayerMovementState GetMoveState() { return *GetField<EPlayerMovementState>(this, 0x3f0); }
   CHealthInfoMP1 &HealthInfo(CStateManager &mgr);
+  void ProcessInput(const CFinalInput&, CStateManager&);
 };
