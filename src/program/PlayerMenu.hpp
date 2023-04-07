@@ -14,6 +14,8 @@ namespace GUI {
   extern CAxisAngle desiredAngularVelocity;
   extern CAxisAngle lastKnownAngularVelocity;
 
+  extern double desiredTime;
+
   void drawPlayerMenu();
   void savePos();
   void loadPos();

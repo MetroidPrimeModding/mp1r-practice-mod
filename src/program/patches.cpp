@@ -70,6 +70,13 @@ HOOK_DEFINE_TRAMPOLINE(CPlayerMP1_ProcessInput) {
       thiz->SetTransform(GUI::desiredTransform);
       thiz->SetVelocityWR(stateManager, GUI::desiredVelocity);
       thiz->SetAngularVelocityWR(stateManager, GUI::desiredAngularVelocity);
+
+      if (GUI::desiredTime > 0) {
+        if (PATCH_CONFIG.load_time) {
+          gameState->GetPlayTime() = GUI::desiredTime;
+        }
+        GUI::desiredTime = -1; //safety so we don't double-load
+      }
     } else {
       if (!InputHelper::isInputToggled()) {
         if (input.GetDigitalHeld(EControl::ZR) && input.GetDigitalHeld(EControl::R) && input.GetDigitalHeld(EControl::DPAD_UP)) {
@@ -195,8 +202,9 @@ void PatchConfig::saveConfig() {
 }
 
 void PatchConfig::loadFromJson(const json &json) {
-  dash_enabled = json["dash_enabled"];
-  pos_edit = json["pos_edit"];
+  dash_enabled = json.value("dash_enabled", dash_enabled);
+  pos_edit = json.value("pos_edit", pos_edit);
+  load_time = json.value("load_time", load_time);
 
   OSD_showInput = json.value("OSD_showInput", OSD_showInput);
   OSD_inputScale = json.value("OSD_inputScale", OSD_inputScale);

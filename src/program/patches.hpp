@@ -9,6 +9,7 @@ struct PatchConfig {
 
   bool dash_enabled = false;
   bool pos_edit = true;
+  bool load_time = false;
 
   bool OSD_showInput = true;
   float OSD_inputScale = 1.5f;

@@ -1,5 +1,6 @@
 #include "PlayerMenu.hpp"
 #include "InventoryMenu.hpp"
+#include "InputWindow.hpp"
 #include "patches.hpp"
 #include "imgui.h"
 #include "prime/CPlayerMP1.hpp"
@@ -24,8 +25,10 @@ namespace GUI {
   CVector3f lastKnownVelocity{};
   CAxisAngle desiredAngularVelocity{};
   CAxisAngle lastKnownAngularVelocity{};
+  double desiredTime{-1};
 
   CTransform4f savedPos{CTransform4f::Identity()};
+  double savedTime{-1};
 //  CVector3f savedVelocity{};
 //  CAxisAngle savedAngularVelocity{};
 //  u32 savedWorldAssetID{0};
@@ -135,6 +138,9 @@ namespace GUI {
     desiredVelocity = {0, 0, 0};
     desiredAngularVelocity = {0, 0, 0};
     hasDesiredPositionData = true;
+    if (savedTime > 0) {
+      desiredTime = savedTime;
+    }
   }
 
   void savePos() {
@@ -142,6 +148,11 @@ namespace GUI {
 //    savedVelocity = *player->GetVelocity();
 //    savedAngularVelocity = *player->GetAngularVelocity();
     savedPos = lastKnownTransform;
+    if (PATCH_CONFIG.load_time) {
+      savedTime = GUI::igt;
+    } else {
+      savedTime = 0.f;
+    }
 //    savedVelocity = lastKnownVelocity;
 //    savedAngularVelocity = lastKnownAngularVelocity;
   }

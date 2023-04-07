@@ -75,7 +75,7 @@ public:
 
   static bool mCinematicForceSkippableOverride;
 
-  inline double GetPlayTime() {
+  inline double &GetPlayTime() {
     return *reinterpret_cast<double*>(reinterpret_cast<size_t>(this) + 0xffb08);
   }
 };

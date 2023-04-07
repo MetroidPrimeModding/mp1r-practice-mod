@@ -77,6 +77,8 @@ void drawDebugWindow() {
       REQ_CONFIG_IF(ImGui::Checkbox("Allow skipping all cutscenes", &CGameState::mCinematicForceSkippableOverride));
       REQ_CONFIG_IF(ImGui::Checkbox("Hide targeting reticle", &PATCH_CONFIG.hide_reticle));
 
+      REQ_CONFIG_IF(ImGui::Checkbox("Load time at same time as loading position", &PATCH_CONFIG.load_time));
+
       ImGui::TreePop();
     }
 
