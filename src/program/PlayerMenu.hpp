@@ -4,6 +4,7 @@
 
 namespace GUI {
   extern bool hasDesiredPositionData;
+  extern bool hasDesiredTimeData;
 
   extern CTransform4f desiredTransform;
   extern CTransform4f lastKnownTransform;
@@ -19,4 +20,7 @@ namespace GUI {
   void drawPlayerMenu();
   void savePos();
   void loadPos();
+
+  void saveTime();
+  void loadTime();
 }

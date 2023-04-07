@@ -65,18 +65,19 @@ HOOK_DEFINE_TRAMPOLINE(CPlayerMP1_ProcessInput) {
     GUI::isInHalfPipeModeInAir = thiz->GetMorphBall()->GetIsInHalfPipeModeInAir();
     GUI::touchedHalfPipeRecently = thiz->GetMorphBall()->GetTouchedHalfPipeRecently();
 
+    if (GUI::desiredTime > 0 && GUI::hasDesiredTimeData) {
+      GUI::hasDesiredTimeData = false;
+      if (PATCH_CONFIG.load_time_with_pos || PATCH_CONFIG.load_time_separately) {
+        gameState->GetPlayTime() = GUI::desiredTime;
+      }
+      GUI::desiredTime = -1; //safety so we don't double-load
+    }
+
     if (GUI::hasDesiredPositionData) {
       GUI::hasDesiredPositionData = false;
       thiz->SetTransform(GUI::desiredTransform);
       thiz->SetVelocityWR(stateManager, GUI::desiredVelocity);
       thiz->SetAngularVelocityWR(stateManager, GUI::desiredAngularVelocity);
-
-      if (GUI::desiredTime > 0) {
-        if (PATCH_CONFIG.load_time) {
-          gameState->GetPlayTime() = GUI::desiredTime;
-        }
-        GUI::desiredTime = -1; //safety so we don't double-load
-      }
     } else {
       if (!InputHelper::isInputToggled()) {
         if (input.GetDigitalHeld(EControl::ZR) && input.GetDigitalHeld(EControl::R) && input.GetDigitalHeld(EControl::DPAD_UP)) {
@@ -90,6 +91,12 @@ HOOK_DEFINE_TRAMPOLINE(CPlayerMP1_ProcessInput) {
         }
         if (input.GetDigitalHeld(EControl::RIGHT_STICK_CLICK) && input.GetDigitalHeld(EControl::DPAD_DOWN)) {
           GUI::savePos();
+        }
+        if (input.GetDigitalHeld(EControl::RIGHT_STICK_CLICK) && input.GetDigitalHeld(EControl::DPAD_LEFT)) {
+          GUI::loadTime();
+        }
+        if (input.GetDigitalHeld(EControl::RIGHT_STICK_CLICK) && input.GetDigitalHeld(EControl::DPAD_RIGHT)) {
+          GUI::saveTime();
         }
       } else {
         if (PATCH_CONFIG.pos_edit && InputHelper::isHoldZR()) {
@@ -204,7 +211,8 @@ void PatchConfig::saveConfig() {
 void PatchConfig::loadFromJson(const json &json) {
   dash_enabled = json.value("dash_enabled", dash_enabled);
   pos_edit = json.value("pos_edit", pos_edit);
-  load_time = json.value("load_time", load_time);
+  load_time_with_pos = json.value("load_time_with_pos", load_time_with_pos);
+  load_time_separately = json.value("load_time_separately", load_time_separately);
 
   OSD_showInput = json.value("OSD_showInput", OSD_showInput);
   OSD_inputScale = json.value("OSD_inputScale", OSD_inputScale);
@@ -226,6 +234,8 @@ json PatchConfig::createSaveJson() {
   json save;
   save["dash_enabled"] = dash_enabled;
   save["pos_edit"] = pos_edit;
+  save["load_time_with_pos"] = load_time_with_pos;
+  save["load_time_separately"] = load_time_separately;
 
   save["OSD_showInput"] = OSD_showInput;
   save["OSD_inputScale"] = OSD_inputScale;

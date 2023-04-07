@@ -4,6 +4,7 @@
 #include "patches.hpp"
 #include "imgui.h"
 #include "prime/CPlayerMP1.hpp"
+#include "logger/Logger.hpp"
 
 #include <numeric>
 
@@ -18,6 +19,7 @@
 
 namespace GUI {
   bool hasDesiredPositionData = false;
+  bool hasDesiredTimeData = false;
 
   CTransform4f desiredTransform = CTransform4f::Identity();
   CTransform4f lastKnownTransform = CTransform4f::Identity();
@@ -138,8 +140,9 @@ namespace GUI {
     desiredVelocity = {0, 0, 0};
     desiredAngularVelocity = {0, 0, 0};
     hasDesiredPositionData = true;
-    if (savedTime > 0) {
+    if (savedTime > 0 && PATCH_CONFIG.load_time_with_pos) {
       desiredTime = savedTime;
+      hasDesiredTimeData = true;
     }
   }
 
@@ -148,13 +151,24 @@ namespace GUI {
 //    savedVelocity = *player->GetVelocity();
 //    savedAngularVelocity = *player->GetAngularVelocity();
     savedPos = lastKnownTransform;
-    if (PATCH_CONFIG.load_time) {
+    if (PATCH_CONFIG.load_time_with_pos) {
       savedTime = GUI::igt;
-    } else {
-      savedTime = 0.f;
     }
 //    savedVelocity = lastKnownVelocity;
 //    savedAngularVelocity = lastKnownAngularVelocity;
+  }
+
+  void saveTime() {
+    if (PATCH_CONFIG.load_time_separately) {
+      savedTime = GUI::igt;
+    }
+  }
+
+  void loadTime() {
+    if (PATCH_CONFIG.load_time_separately) {
+      desiredTime = savedTime;
+      hasDesiredTimeData = true;
+    }
   }
 }
 

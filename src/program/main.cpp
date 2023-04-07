@@ -77,7 +77,11 @@ void drawDebugWindow() {
       REQ_CONFIG_IF(ImGui::Checkbox("Allow skipping all cutscenes", &CGameState::mCinematicForceSkippableOverride));
       REQ_CONFIG_IF(ImGui::Checkbox("Hide targeting reticle", &PATCH_CONFIG.hide_reticle));
 
-      REQ_CONFIG_IF(ImGui::Checkbox("Load time at same time as loading position", &PATCH_CONFIG.load_time));
+      REQ_CONFIG_IF(ImGui::Checkbox("Load time at same time as loading position", &PATCH_CONFIG.load_time_with_pos));
+      REQ_CONFIG_IF(ImGui::Checkbox("Load time using separate hotkey", &PATCH_CONFIG.load_time_separately));
+      ImGui::Indent(40);
+      ImGui::Text("(right stick + d-left/right)");
+      ImGui::Unindent(40);
 
       ImGui::TreePop();
     }
