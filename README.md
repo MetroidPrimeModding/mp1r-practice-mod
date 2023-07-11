@@ -7,6 +7,8 @@ MP1 remastered practice mod
 Download the latest release from [the releases page](https://github.com/MetroidPrimeModding/mp1r-practice-mod/releases).
 
 Put the files from the zip in the following location:
+- yuzu (right click->open mod data location)
+  - `yuzu/load/010012101468C000/PrimePracticeMod/exefs/`
 - ryujinx (right click->open mods directory)
   - `mods/contents/010012101468C000/exefs/`
 - atmosphere (modded switch): 
