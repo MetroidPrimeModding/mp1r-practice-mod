@@ -26,6 +26,11 @@ struct PatchConfig {
 
   bool hide_reticle = false;
 
+  bool enable_stop_time = false;
+  bool hide_cannon = false;
+  bool hide_hud = false;
+  bool hide_hud_when_time_stopped = true;
+
   void RequestConfigSave();
   bool ShouldSave();
 

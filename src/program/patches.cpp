@@ -1,11 +1,13 @@
 #include "patches.hpp"
 #include "logger/Logger.hpp"
 #include "prime/CObjectId.hpp"
-#include "InventoryMenu.hpp"
+#include "prime/CPlayerStateMP1.hpp"
+#include "prime/CGameState.hpp"
 #include "prime/CPlayerMP1.hpp"
 #include "prime/CFinalInput.hpp"
 #include "prime/CSamusHudMP1.hpp"
 #include "PlayerMenu.hpp"
+#include "PhotoModeMenu.hpp"
 #include "InputWindow.hpp"
 #include "helpers/InputHelper.h"
 #include "imgui.h"
@@ -131,6 +133,20 @@ HOOK_DEFINE_TRAMPOLINE(CPlayerMP1_ProcessInput) {
 
     }
 
+    if (!InputHelper::isInputToggled() && GUI::is_time_stopped) {
+      auto rot = CRelAngle(InputHelper::getRightStickX() * -0.05f);
+      CTransform4f rotT = CTransform4f::Identity();
+      rotT.RotateLocalY(rot);
+      GUI::lastKnownTransform = GUI::lastKnownTransform * rotT;
+      thiz->SetTransform(GUI::lastKnownTransform);
+
+      const float maxPitch = gpTweakPlayer->GetMaxFreeLookPitchAngle();
+      float rotPitch = InputHelper::getRightStickY() * 0.05f;
+      float currPitch = *thiz->GetFreeLookPitchAngle();
+      *thiz->GetFreeLookPitchAngle() = std::clamp(currPitch + rotPitch, -maxPitch, maxPitch);
+
+    }
+
     Orig(thiz, input, stateManager);
 
     GUI::lastKnownCPlayerInput = input;
@@ -150,8 +166,61 @@ HOOK_DEFINE_TRAMPOLINE(CPlayerMP1_ProcessInput) {
 
 HOOK_DEFINE_TRAMPOLINE(CSamusHudMP1_DrawTargetingReticle) {
   static void Callback(const CSamusHudMP1* self, const CStateManager& mgr) {
-    if (!PATCH_CONFIG.hide_reticle) {
+    if (!PATCH_CONFIG.hide_reticle && !GUI::shouldHideAll()) {
       Orig(self, mgr);
+    }
+  }
+};
+
+HOOK_DEFINE_TRAMPOLINE(CStateManagerGameLogicMP1_GameMainLoop){
+  static void Callback(CStateManagerGameLogicMP1 *self, CStateManager &mgr, CStateManagerUpdateAccess &mgrUpdAcc, float dt) {
+    if(PATCH_CONFIG.enable_stop_time) {
+      if (InputHelper::isHoldLeftStick() && InputHelper::isPressL() || InputHelper::isPressLeftStick() && InputHelper::isHoldL()) {
+        const auto new_state = GUI::is_time_stopped ? CStateManagerGameLogicMP1::EGameState::Running
+                                                    : CStateManagerGameLogicMP1::EGameState::SoftPaused; 
+        self->SetGameState(new_state);
+        GUI::is_time_stopped = !GUI::is_time_stopped;
+        if (GUI::is_time_stopped) {
+            self->PlayerActor()->BreakOrbit((CPlayerMP1::EOrbitBrokenType)1, mgr);
+        }
+      }
+    }
+    
+    Orig(self, mgr, mgrUpdAcc, dt);
+  }
+};
+
+HOOK_DEFINE_TRAMPOLINE(CPlayerMP1_RenderGun) {
+  static void Callback(const CPlayerMP1* self, const CStateManager& mgr, const CVector3f& pos) {
+    if (!PATCH_CONFIG.hide_cannon && !GUI::shouldHideAll()){
+        Orig(self, mgr, pos);
+    }
+  }
+};
+
+HOOK_DEFINE_TRAMPOLINE(CSamusHudMP1_Draw){static void Callback(
+    const CSamusHudMP1* self, const CStateManager& stateManager, float alpha, uint32_t param_3,
+        const rstl::enum_bit_field<CSamusHudMP1::EHudDrawFilter, unsigned int, (CSamusHudMP1::EHudDrawFilter)3>& hudDrawFilterFlags) {
+    if (!PATCH_CONFIG.hide_hud && !GUI::shouldHideAll()) {
+        Orig(self, stateManager, alpha, param_3, hudDrawFilterFlags);
+    }
+  }
+};
+
+HOOK_DEFINE_TRAMPOLINE(CSamusHudMP1_DrawHelmet){
+  static void Callback(const CSamusHudMP1* self, const CStateManager& mgr, float camYOffset) {
+    if (!PATCH_CONFIG.hide_hud && !GUI::shouldHideAll()) {
+        Orig(self, mgr, camYOffset);
+    }
+  }
+};
+
+HOOK_DEFINE_TRAMPOLINE(CAutoMapperMP1_Update){
+  static void Callback(CAutoMapperMP1* self, float f1, const CStateManager &csm, const CGuiCamera& cgc, float f2, bool b1) {
+    if (PATCH_CONFIG.hide_hud || GUI::shouldHideAll()) {
+      Orig(self, f1, csm, cgc, 0.f, b1);
+    } else {
+      Orig(self, f1, csm, cgc, f2, b1);
     }
   }
 };
@@ -167,6 +236,11 @@ void runCodePatches() {
 //  CheckFloatVar::InstallAtOffset(0xcee418ll);
 
   CPlayerMP1_ProcessInput::InstallAtFuncPtr(&CPlayerMP1::ProcessInput);
+  CStateManagerGameLogicMP1_GameMainLoop::InstallAtFuncPtr(&CStateManagerGameLogicMP1::GameMainLoop);
+  CPlayerMP1_RenderGun::InstallAtFuncPtr(&CPlayerMP1::RenderGun);
+  CSamusHudMP1_Draw::InstallAtFuncPtr(&CSamusHudMP1::Draw);
+  CSamusHudMP1_DrawHelmet::InstallAtFuncPtr(&CSamusHudMP1::DrawHelmet);
+  CAutoMapperMP1_Update::InstallAtFuncPtr(&CAutoMapperMP1::Update);
   CSamusHudMP1_DrawTargetingReticle::InstallAtFuncPtr(&CSamusHudMP1::DrawTargetingReticle);
 }
 
@@ -227,6 +301,10 @@ void PatchConfig::loadFromJson(const json &json) {
   menuY = json.value("menuY", menuY);
 
   hide_reticle = json.value("hide_reticle", false);
+  enable_stop_time = json.value("enable_stop_time", enable_stop_time);
+  hide_cannon = json.value("hide_cannon", hide_cannon);
+  hide_hud = json.value("hide_hud", hide_hud);
+  hide_hud_when_time_stopped = json.value("hide_hud_when_time_stopped", hide_hud_when_time_stopped);
 }
 
 
@@ -250,6 +328,10 @@ json PatchConfig::createSaveJson() {
   save["menuY"] = menuY;
 
   save["hide_reticle"] = hide_reticle;
+  save["enable_stop_time"] = enable_stop_time;
+  save["hide_cannon"] = hide_cannon;
+  save["hide_hud"] = hide_hud;
+  save["hide_hud_when_time_stopped"] = hide_hud_when_time_stopped;
   return save;
 }
 

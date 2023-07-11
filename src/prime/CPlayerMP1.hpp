@@ -48,11 +48,22 @@ public:
 //  inline float &GetB() const { return *GetField<float>(this, 0x4); }
 };
 
+class CTweakPlayerMP1 {
+public:
+  inline float GetMaxFreeLookPitchAngle() { return *GetField<float>(this, 0x138); }
+};
+
+extern CTweakPlayerMP1* gpTweakPlayer;
+
 class CFinalInput;
 class CPlayerMP1 : public CPhysicsActorMP1 {
 public:
+  enum class EOrbitBrokenType : uint32_t;
+  void BreakOrbit(EOrbitBrokenType, CStateManager&);
+  inline float* GetFreeLookPitchAngle() { return GetField<float>(this, 0x5cc); };
   inline CMorphBallMP1 *GetMorphBall() { return *GetField<CMorphBallMP1*>(this, 0x9d0); }
   inline EPlayerMovementState GetMoveState() { return *GetField<EPlayerMovementState>(this, 0x3f0); }
   CHealthInfoMP1 &HealthInfo(CStateManager &mgr);
   void ProcessInput(const CFinalInput&, CStateManager&);
+  void RenderGun(const CStateManager& mgr, const CVector3f& pos) const;
 };
