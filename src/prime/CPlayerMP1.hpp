@@ -2,12 +2,7 @@
 
 #include "prime/Math.hpp"
 #include "program/GetField.hpp"
-
-class CActorMP1 {
-public:
-  CTransform4f &GetTransform() const;
-  CTransform4f SetTransform(const CTransform4f &transform);
-};
+#include "prime/CActorMP1.hpp"
 
 class CStateManager;
 class CPhysicsActorMP1 : public CActorMP1 {

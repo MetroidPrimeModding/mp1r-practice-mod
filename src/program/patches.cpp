@@ -172,6 +172,34 @@ HOOK_DEFINE_TRAMPOLINE(CSamusHudMP1_DrawTargetingReticle) {
   }
 };
 
+HOOK_DEFINE_TRAMPOLINE(CFirstPersonCameraMP1_Think){
+  static void Callback(CFirstPersonCameraMP1* self, float dt, CStateManager& mgr) {
+    GUI::fpCamera = self;
+    Orig(self, dt, mgr);
+    if (std::abs(GUI::viewRoll) > 0.01) {
+      auto roll = CRelAngle(GUI::viewRoll * (std::numbers::pi / 180.f));
+      auto fpCamXf = self->GetTransform();
+      CTransform4f rotT = CTransform4f::Identity();
+      rotT.RotateLocalZ(roll);
+      self->SetTransform(fpCamXf * rotT);
+    }
+  }
+};
+
+HOOK_DEFINE_TRAMPOLINE(CGameCameraMP1_UpdateFOV){
+  static void Callback(CGameCameraMP1* self, float dt) {
+    if (self == GUI::fpCamera && GUI::shouldUpdateVerticalFov) {
+        *self->GetCurrentFOV() = GUI::verticalFov;
+        GUI::shouldUpdateVerticalFov = false;
+    } else {
+      Orig(self, dt);
+    }
+    if (self == GUI::fpCamera) {
+      GUI::verticalFov = *self->GetCurrentFOV();
+    }
+  }
+};
+
 HOOK_DEFINE_TRAMPOLINE(CStateManagerGameLogicMP1_GameMainLoop){
   static void Callback(CStateManagerGameLogicMP1 *self, CStateManager &mgr, CStateManagerUpdateAccess &mgrUpdAcc, float dt) {
     if(PATCH_CONFIG.enable_stop_time) {
@@ -242,6 +270,8 @@ void runCodePatches() {
   CSamusHudMP1_DrawHelmet::InstallAtFuncPtr(&CSamusHudMP1::DrawHelmet);
   CAutoMapperMP1_Update::InstallAtFuncPtr(&CAutoMapperMP1::Update);
   CSamusHudMP1_DrawTargetingReticle::InstallAtFuncPtr(&CSamusHudMP1::DrawTargetingReticle);
+  CGameCameraMP1_UpdateFOV::InstallAtFuncPtr(&CGameCameraMP1::UpdateFOV);
+  CFirstPersonCameraMP1_Think::InstallAtFuncPtr(&CFirstPersonCameraMP1::Think);
 }
 
 void PatchConfig::loadConfig() {
