@@ -9,6 +9,7 @@ namespace GUI {
   extern bool shouldUpdateVerticalFov;
   extern float viewRoll;
   extern CGameCameraMP1* fpCamera;
+  extern float exposure;
 
   const bool shouldHideAll();
   void drawPhotoModeMenu();

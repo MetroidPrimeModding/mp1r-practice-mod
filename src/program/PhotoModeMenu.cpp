@@ -17,6 +17,7 @@ namespace GUI {
   bool shouldUpdateVerticalFov = false;
   float viewRoll = 0.f;
   CGameCameraMP1* fpCamera = nullptr;
+  float exposure;
 
   const bool shouldHideAll() {
       return PATCH_CONFIG.hide_hud_when_time_stopped && is_time_stopped;
@@ -53,6 +54,17 @@ namespace GUI {
       }
       ImGui::SameLine();
       ImGui::Text("View Roll");
+      ImGui::PopID();
+
+      // Exposure
+      ImGui::PushID("Exposure");
+      ImGui::DragFloat("", &exposure, 0.1, -2.5, 2.5, "%.2f");
+      ImGui::SameLine();
+      if (ImGui::Button("Reset")) {
+        exposure = 0.f;
+      }
+      ImGui::SameLine();
+      ImGui::Text("Exposure");
       ImGui::PopID();
 
       ImGui::TreePop();

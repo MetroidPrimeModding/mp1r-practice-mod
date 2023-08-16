@@ -177,7 +177,7 @@ HOOK_DEFINE_TRAMPOLINE(CFirstPersonCameraMP1_Think){
     GUI::fpCamera = self;
     Orig(self, dt, mgr);
     if (std::abs(GUI::viewRoll) > 0.01) {
-      auto roll = CRelAngle(GUI::viewRoll * (std::numbers::pi / 180.f));
+      auto roll = CRelAngle(RAD(GUI::viewRoll));
       auto fpCamXf = self->GetTransform();
       CTransform4f rotT = CTransform4f::Identity();
       rotT.RotateLocalZ(roll);
@@ -200,10 +200,17 @@ HOOK_DEFINE_TRAMPOLINE(CGameCameraMP1_UpdateFOV){
   }
 };
 
+HOOK_DEFINE_TRAMPOLINE(NTonemap_build_tonemap_eval_params){
+  static void Callback(STonemapParams& tonemap) {
+    *tonemap.inverseExposure() -= GUI::exposure;
+    Orig(tonemap);
+  }
+};
+
 HOOK_DEFINE_TRAMPOLINE(CStateManagerGameLogicMP1_GameMainLoop){
   static void Callback(CStateManagerGameLogicMP1 *self, CStateManager &mgr, CStateManagerUpdateAccess &mgrUpdAcc, float dt) {
     if(PATCH_CONFIG.enable_stop_time) {
-      if (InputHelper::isHoldLeftStick() && InputHelper::isPressL() || InputHelper::isPressLeftStick() && InputHelper::isHoldL()) {
+      if ((InputHelper::isHoldLeftStick() && InputHelper::isPressL()) || (InputHelper::isPressLeftStick() && InputHelper::isHoldL())) {
         const auto new_state = GUI::is_time_stopped ? CStateManagerGameLogicMP1::EGameState::Running
                                                     : CStateManagerGameLogicMP1::EGameState::SoftPaused; 
         self->SetGameState(new_state);
@@ -272,6 +279,7 @@ void runCodePatches() {
   CSamusHudMP1_DrawTargetingReticle::InstallAtFuncPtr(&CSamusHudMP1::DrawTargetingReticle);
   CGameCameraMP1_UpdateFOV::InstallAtFuncPtr(&CGameCameraMP1::UpdateFOV);
   CFirstPersonCameraMP1_Think::InstallAtFuncPtr(&CFirstPersonCameraMP1::Think);
+  NTonemap_build_tonemap_eval_params::InstallAtSymbol("_ZN8NTonemap25build_tonemap_eval_paramsERK14STonemapParams"); // Hook via symbol to bypass const
 }
 
 void PatchConfig::loadConfig() {

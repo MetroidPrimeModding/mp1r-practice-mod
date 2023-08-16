@@ -24,3 +24,12 @@ class CCameraManagerMP1 {
 public:
   static float GetDefaultFirstPersonVerticalFOV();
 };
+
+class STonemapParams {
+public:
+  inline float* inverseExposure() { return GetField<float>(this, 0x0); };
+};
+
+namespace NTonemap {
+  void build_tonemap_eval_params(STonemapParams const&);
+}
