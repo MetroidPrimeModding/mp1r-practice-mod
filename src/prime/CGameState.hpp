@@ -1,6 +1,7 @@
 #pragma once
 
 #include "CObjectId.hpp"
+#include "program/GetField.hpp"
 #include "types.h"
 
 namespace rstl {
@@ -80,18 +81,33 @@ public:
   }
 };
 
+class CStateManagerGameLogicMP1;
+class CStateManager {
+public:
+  CGameState* GameState();
+
+  inline CStateManagerGameLogicMP1* GameLogic() {
+    return GetField<CStateManagerGameLogicMP1>(this, 0x4e0150);
+  }
+};
+
+class CStateManagerUpdateAccess;
+
 class CPlayerStateMP1;
 class CGameStateMP1 {
 public:
 //  CPlayerStateMP1* GetPlayerState() const;
   CPlayerStateMP1* PlayerState();
-  inline CPlayerStateMP1* GetPlayerState_2() { return reinterpret_cast<CPlayerStateMP1*>(reinterpret_cast<size_t>(this) + 0x20); }
+  inline CPlayerStateMP1* GetPlayerState_2() { return GetField<CPlayerStateMP1>(this, 0x20); }
 };
 extern CGameStateMP1* gpGameState;
 
 class CPlayerMP1;
 class CStateManagerGameLogicMP1 {
 public:
-  static CPlayerStateMP1 *PlayerState();
-  CPlayerMP1 *PlayerActor();
+  enum class EGameState : uint32_t { Running, SoftPaused, Paused };
+  void GameMainLoop(CStateManager& mgr, CStateManagerUpdateAccess& mgrUpdAcc, float dt);
+  static CPlayerStateMP1* PlayerState();
+  CPlayerMP1* PlayerActor();
+  void SetGameState(EGameState state);
 };

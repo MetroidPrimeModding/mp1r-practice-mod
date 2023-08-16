@@ -15,6 +15,7 @@
 #include "PlayerMenu.hpp"
 #include "ProductionFlagMenu.hpp"
 #include "InputWindow.hpp"
+#include "PhotoModeMenu.hpp"
 
 #define IMGUI_ENABLED true
 
@@ -86,6 +87,7 @@ void drawDebugWindow() {
       ImGui::TreePop();
     }
 
+    GUI::drawPhotoModeMenu();
     GUI::drawInventoryMenu();
     GUI::drawPlayerMenu();
 //  GUI::drawProductionFlagMenu();

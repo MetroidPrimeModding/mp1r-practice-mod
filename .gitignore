@@ -40,3 +40,5 @@ cmake-build-*/
 # specific files
 compile_commands.json
 scripts/binary_to_compressed_c
+/.vs
+/CMakeSettings.json
