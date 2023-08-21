@@ -58,9 +58,9 @@ HOOK_DEFINE_INLINE(CheckFloatVar) {
 HOOK_DEFINE_TRAMPOLINE(CPlayerMP1_ProcessInput) {
   static void Callback(CPlayerMP1 *thiz, const CFinalInput &input, CStateManager &stateManager) {
     mostRecentStateManager = &stateManager;
+
     auto *gameState = stateManager.GameState();
     GUI::igt = gameState->GetPlayTime();
-
     GUI::moveState = thiz->GetMoveState();
     GUI::bombJumpState = thiz->GetMorphBall()->GetBombJumpState();
     GUI::isInHalfPipeMode = thiz->GetMorphBall()->GetIsInHalfPipeMode();
@@ -161,6 +161,11 @@ HOOK_DEFINE_TRAMPOLINE(CPlayerMP1_ProcessInput) {
       int etanks = CStateManagerGameLogicMP1::PlayerState()->GetItemCapacity(CPlayerStateMP1::EItemType::EnergyTanks);
       thiz->HealthInfo(stateManager).heatlh = (float)etanks * 100.0f + 99.0f;
     }
+
+    if (GUI::kill) {
+      CStateManagerGameLogicMP1::PlayerState()->Kill(stateManager);
+      GUI::kill = false;
+    }
   }
 };
 
@@ -209,6 +214,17 @@ HOOK_DEFINE_TRAMPOLINE(NTonemap_build_tonemap_eval_params){
 
 HOOK_DEFINE_TRAMPOLINE(CStateManagerGameLogicMP1_GameMainLoop){
   static void Callback(CStateManagerGameLogicMP1 *self, CStateManager &mgr, CStateManagerUpdateAccess &mgrUpdAcc, float dt) {
+    auto *playerState = CStateManagerGameLogicMP1::PlayerState();
+    auto *cameraManager = self->GetCameraManager();
+    auto *world = self->GetWorld();
+
+    // Consider not alive when loading game
+    GUI::alive = false;
+    // Consider in cutscene when loading game
+    GUI::isInCutscene = true;
+    // set by default to undefined
+    GUI::loadPhase = -1;
+
     if(PATCH_CONFIG.enable_stop_time) {
       if ((InputHelper::isHoldLeftStick() && InputHelper::isPressL()) || (InputHelper::isPressLeftStick() && InputHelper::isHoldL())) {
         const auto new_state = GUI::is_time_stopped ? CStateManagerGameLogicMP1::EGameState::Running
@@ -218,6 +234,12 @@ HOOK_DEFINE_TRAMPOLINE(CStateManagerGameLogicMP1_GameMainLoop){
         if (GUI::is_time_stopped) {
             self->PlayerActor()->BreakOrbit((CPlayerMP1::EOrbitBrokenType)1, mgr);
         }
+      }
+    } else {
+      if(playerState != nullptr && cameraManager != nullptr && world != nullptr) {
+        GUI::alive = playerState->IsPlayerAlive();
+        GUI::isInCutscene = !GUI::alive ? true : cameraManager->IsInCinematicCamera();
+        GUI::loadPhase = !GUI::alive ? -1 : world->GetLoadPhase();
       }
     }
     

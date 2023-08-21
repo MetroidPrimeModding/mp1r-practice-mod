@@ -22,6 +22,14 @@ public:
 
 class CCameraManagerMP1 {
 public:
+  inline bool IsInCinematicCamera()
+  {
+    // camera count
+    if(*GetField<int>(this, 0x8) != 0) {
+      return true;
+    }
+    return *GetField<int>(this, 0x18) != 0;
+  }
   static float GetDefaultFirstPersonVerticalFOV();
 };
 
