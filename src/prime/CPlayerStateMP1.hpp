@@ -1,5 +1,7 @@
 #pragma once
 
+class CStateManager;
+
 class CPowerUp {
 public:
   int amount;
@@ -60,8 +62,10 @@ public:
   void SetPowerUp(EItemType type, int amount);
   int GetPowerUp(EItemType type);
   int GetItemCapacity(EItemType type) const;
+  void Kill(CStateManager&);
 
   inline CPowerUp* GetPowerups() { return reinterpret_cast<CPowerUp*>(reinterpret_cast<size_t>(this) + 0x44); }
+  inline bool IsPlayerAlive() { return (*reinterpret_cast<u8*>(this) & 1) == 1; }
 
   static int GetItemMax(EItemType type);
 //  _ZN15CPlayerStateMP110GetItemMaxE9EItemType

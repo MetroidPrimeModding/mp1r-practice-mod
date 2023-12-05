@@ -1,6 +1,8 @@
 #pragma once
 
 #include "CObjectId.hpp"
+#include "prime/CFirstPersonCamera.hpp"
+#include "prime/CWorldMP1.hpp"
 #include "program/GetField.hpp"
 #include "types.h"
 
@@ -89,6 +91,12 @@ public:
   inline CStateManagerGameLogicMP1* GameLogic() {
     return GetField<CStateManagerGameLogicMP1>(this, 0x4e0150);
   }
+  inline CCameraManagerMP1* GetCameraManager() { 
+    auto* ptr = reinterpret_cast<size_t*>(reinterpret_cast<size_t>(this) + 0x4e0150);
+    if (ptr != nullptr)
+      return *reinterpret_cast<CCameraManagerMP1**>(reinterpret_cast<size_t>(*ptr) + 0x30);
+    return nullptr;
+  }
 };
 
 class CStateManagerUpdateAccess;
@@ -110,4 +118,7 @@ public:
   static CPlayerStateMP1* PlayerState();
   CPlayerMP1* PlayerActor();
   void SetGameState(EGameState state);
+
+  inline CWorldMP1* GetWorld() { return *GetField<CWorldMP1*>(this, 0x20); }
+  inline CCameraManagerMP1* GetCameraManager() { return *GetField<CCameraManagerMP1*>(this, 0x30); }
 };

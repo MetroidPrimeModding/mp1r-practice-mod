@@ -36,6 +36,11 @@ namespace GUI {
 //  u32 savedWorldAssetID{0};
 //  u32 savedAreaAssetID{0};
 
+  bool isInCutscene = true;
+  bool alive = false;
+  bool kill = false;
+  int32_t loadPhase = -1;
+
   void drawPlayerMenu() {
 //    CStateManager *stateManager = mostRecentStateManager;
 //    if (stateManager == nullptr) return;
@@ -124,6 +129,9 @@ namespace GUI {
 //        player->setFluidCounter((u32) fluidCounter);
 //      }
 //      ImGui::DragFloat("Water depth", player->getDepthUnderWater(), 1.f, -FLT_MAX, FLT_MAX, "%.3f", flags);
+      if (!isInCutscene && loadPhase == 4 && ImGui::Button("Death")) {
+        kill = alive;
+      }
 
       ImGui::TreePop();
     }

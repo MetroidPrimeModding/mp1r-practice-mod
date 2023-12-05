@@ -1,6 +1,7 @@
 #pragma once
 
 #include "prime/Math.hpp"
+#include "types.h"
 
 namespace GUI {
   extern bool hasDesiredPositionData;
@@ -16,6 +17,11 @@ namespace GUI {
   extern CAxisAngle lastKnownAngularVelocity;
 
   extern double desiredTime;
+
+  extern bool isInCutscene;
+  extern bool alive;
+  extern bool kill;
+  extern int32_t loadPhase;
 
   void drawPlayerMenu();
   void savePos();
