@@ -1,6 +1,8 @@
 #pragma once
 
+#include "CGameInstanceState.h"
 #include "CObjectId.hpp"
+#include "CWorldStateMP1.h"
 #include "program/GetField.hpp"
 #include "types.h"
 
@@ -28,10 +30,13 @@ class CGuid;
 class CGameState {
 public:
   struct SInitialState {
-    SInitialState(CObjectId const &);
-    SInitialState(CObjectId const &, SSaveInfo const &);
-    SInitialState(CInputStream &, uint);
+    SInitialState(CObjectId const&);
+    SInitialState(CObjectId const&,SSaveInfo const&);
+    SInitialState(CInputStream &,uint);
     void PutTo(COutputStream &);
+
+    CObjectId mInitialId;
+    int mSaveSlot;
   };
 
   enum EReturnTrueIfAreaInvalid {
@@ -70,9 +75,10 @@ public:
                           rstl::ncrc_ptr<CGameOptions> const &);
   void CreateNewGameState(rstl::ncrc_ptr<CUniverseInfo> const &, CGameState::SInitialState const &);
   void ResetGameState(CGameState const &, CGameState::SInitialState const &, CGameState::EForcePreserveData);
-  void ContinueWithNewInitialState(CGameState &, CGameState::SInitialState const &);
   void SetInitialState(CGameState::SInitialState const &);
   void ResetWithQuickLoadBuffer(void);
+
+  static void ContinueWithNewInitialState(CGameState &, CGameState::SInitialState const &);
 
   static bool mCinematicForceSkippableOverride;
 
@@ -84,7 +90,11 @@ public:
 class CStateManagerGameLogicMP1;
 class CStateManager {
 public:
-  CGameState* GameState();
+  CGameState& GameState(void);
+  CGameState* GetGameState(void) const;
+
+  CGameInstanceState& GameInstanceState(void);
+  CGameInstanceState* GetGameInstanceState(void) const;
 
   inline CStateManagerGameLogicMP1* GameLogic() {
     return GetField<CStateManagerGameLogicMP1>(this, 0x4e0150);
@@ -92,12 +102,38 @@ public:
 };
 
 class CStateManagerUpdateAccess;
+class CSystemStateMP1;
 
 class CPlayerStateMP1;
 class CGameStateMP1 {
 public:
-//  CPlayerStateMP1* GetPlayerState() const;
-  CPlayerStateMP1* PlayerState();
+
+  ~CGameStateMP1();
+  CGameStateMP1(void);
+  CGameStateMP1(CInputStream &,uint);
+  void ResetFromStream(CInputStream &,uint);
+  void InitializeWithUniverseInfo(CGameState const&);
+  void SetCurrentWorldId(CObjectId);
+  void PutTo(COutputStream &);
+  void StreamInSystemState(CInputStream &,uint);
+  void StreamOutSystemState(COutputStream &);
+  void StreamInStateForGameCompletion(CInputStream &);
+  void StreamOutStateForGameCompletion(COutputStream &);
+  void CopyInSystemStateFrontEndSettings(CSystemStateMP1 const&);
+
+  CWorldStateMP1* StateForWorld(CObjectId);
+
+  CWorldStateMP1* CurrentWorldState(void);
+  const CWorldStateMP1* GetCurrentWorldState(void) const;
+
+  CPlayerStateMP1* PlayerState(void);
+  const CPlayerStateMP1* GetPlayerState(void) const;
+
+  void SetGameCompleted(bool);
+  void GetDamageMultiplier(void);
+  void GetWeaponMultiplier(void);
+  void IsIntroLevel(void);
+
   inline CPlayerStateMP1* GetPlayerState_2() { return GetField<CPlayerStateMP1>(this, 0x20); }
 };
 extern CGameStateMP1* gpGameState;

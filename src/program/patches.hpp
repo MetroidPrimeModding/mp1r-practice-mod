@@ -13,7 +13,7 @@ struct PatchConfig {
   bool load_time_separately = false;
 
   bool OSD_showInput = true;
-  float OSD_inputScale = 1.5f;
+  float OSD_inputScale = 2.5f;
 
   bool OSD_showMonitor = true;
   bool OSD_showIGT = true;

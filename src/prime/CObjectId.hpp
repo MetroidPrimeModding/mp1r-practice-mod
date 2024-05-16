@@ -1,21 +1,27 @@
 #pragma once
 
-namespace rstl {
-  template<typename T, typename F, typename M>
-  class basic_string;
-
-  template<typename T>
-  class char_traits;
-
-  class rmemory_allocator;
-}
-
+#include <prime/rstl/string.h>
 class CInputStream;
 
 class COutputStream;
 
 class CGuid {
 public:
+
+  CGuid() { low = 0; high = 0; }
+
+  CGuid(CInputStream &);
+  CGuid(char const(&)[37]);
+
+  void PutTo(COutputStream &) const;
+  int GetPutToSize(void) const; // return 0x10;
+  void FromString(rstl::string const&);
+  void SetFromString(rstl::string const&);
+  void IsGuidString(rstl::string const&);
+  rstl::string AsString(void) const;
+  int GetHashValue(void) const;
+  void HexDWord(char const*);
+
   union {
     char data[64];
     struct {
@@ -27,12 +33,17 @@ public:
 };
 
 class CObjectId : public CGuid {
+  public:
+  CObjectId() : CGuid() {}
+
   CObjectId(CInputStream &);
-  void Invalid(void);
-  void FromString(rstl::basic_string<char, rstl::char_traits<char>, rstl::rmemory_allocator> const &);
+
+  explicit inline CObjectId(char const(&str)[37]) : CGuid(str) {}
+
+  static CObjectId* Invalid(void);
+  static CObjectId* FromString(rstl::string const&);
+
   void PutTo(COutputStream &);
   void GetPutToSize(void);
-  void operator<(CObjectId const &);
-public:
-
+  void operator<(CObjectId const&);
 };

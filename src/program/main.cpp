@@ -10,12 +10,13 @@
 
 #include "ExceptionHandler.h"
 
-#include "prime/CGameState.hpp"
+#include "InputWindow.hpp"
 #include "InventoryMenu.hpp"
+#include "PhotoModeMenu.hpp"
 #include "PlayerMenu.hpp"
 #include "ProductionFlagMenu.hpp"
-#include "InputWindow.hpp"
-#include "PhotoModeMenu.hpp"
+#include "WarpMenu.h"
+#include "prime/CGameState.hpp"
 
 #define IMGUI_ENABLED true
 
@@ -39,7 +40,7 @@
 bool wasJustOpened = false;
 
 void drawDebugWindow() {
-  ImGui::SetNextWindowSizeConstraints(ImVec2(200, 100), ImVec2(500, 500));
+  ImGui::SetNextWindowSizeConstraints(ImVec2(200, 100), ImVec2(800, 500));
   ImGui::SetNextWindowCollapsed(!InputHelper::isInputToggled());
   if (InputHelper::isInputToggled()) {
     if (!wasJustOpened) {
@@ -90,6 +91,7 @@ void drawDebugWindow() {
     GUI::drawPhotoModeMenu();
     GUI::drawInventoryMenu();
     GUI::drawPlayerMenu();
+    GUI::drawWarpMenu();
 //  GUI::drawProductionFlagMenu();
 
   }
@@ -97,6 +99,8 @@ void drawDebugWindow() {
   ImGui::End();
 
   GUI::drawInputWindow();
+
+  ImGui::SetNextWindowBgAlpha(0.35f);
   GUI::drawMonitorWindow();
 
   if (PATCH_CONFIG.ShouldSave()) {

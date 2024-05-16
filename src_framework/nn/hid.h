@@ -283,6 +283,14 @@ namespace nn {
             s32 mReserved;
         };
 
+        template<size_t T>
+        struct TouchScreenState {
+          u64 samplingNumber = 0;
+          s32 count = T;
+          char reserved[4] = {};
+          TouchState touches[T] = {};
+        };
+
         struct KeyboardState {
             u64 samplingNumber;
             nn::util::BitFlagSet<32, KeyboardModifier> modifiers;
@@ -383,6 +391,9 @@ namespace nn {
         void GetMouseState(nn::hid::MouseState *);
 
         void GetKeyboardState(nn::hid::KeyboardState *);
+
+        template<size_t T>
+        void GetTouchScreenState(nn::hid::TouchScreenState<T> *);
         
     }  // namespace hid
 }  // namespace nn

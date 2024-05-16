@@ -58,7 +58,7 @@ HOOK_DEFINE_INLINE(CheckFloatVar) {
 HOOK_DEFINE_TRAMPOLINE(CPlayerMP1_ProcessInput) {
   static void Callback(CPlayerMP1 *thiz, const CFinalInput &input, CStateManager &stateManager) {
     mostRecentStateManager = &stateManager;
-    auto *gameState = stateManager.GameState();
+    auto *gameState = stateManager.GetGameState();
     GUI::igt = gameState->GetPlayTime();
 
     GUI::moveState = thiz->GetMoveState();

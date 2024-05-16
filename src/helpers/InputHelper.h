@@ -33,6 +33,8 @@ public:
 
   static bool isKeyRelease(nn::hid::KeyboardKey key);
 
+  static bool isModifierActive(nn::hid::KeyboardModifier modifier);
+
   // mouse inputs
 
   static bool isMouseHold(nn::hid::MouseButton button);
@@ -41,11 +43,24 @@ public:
 
   static bool isMouseRelease(nn::hid::MouseButton button);
 
+  static bool isMouseConnected();
+
   // mouse coordinate getters
 
   static void getMouseCoords(float *x, float *y);
 
   static void getScrollDelta(float *x, float *y);
+
+  // touch input getters
+
+  static bool getTouchCoords(s32 *x, s32 *y);
+
+  static bool isHoldTouch();
+
+  static bool isPressTouch();
+
+  static bool isReleaseTouch();
+
 
   // specific button funcs
 
@@ -173,6 +188,9 @@ private:
 
   static nn::hid::MouseState curMouseState;
   static nn::hid::MouseState prevMouseState;
+
+  static nn::hid::TouchScreenState<1> curTouchState;
+  static nn::hid::TouchScreenState<1> prevTouchState;
 
   static ulong selectedPort;
 
