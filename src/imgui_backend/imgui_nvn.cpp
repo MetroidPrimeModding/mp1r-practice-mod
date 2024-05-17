@@ -234,6 +234,7 @@ void nvnImGui::procDraw() {
   }
 
   ImGui::Render();
+  ImguiNvnBackend::updateProjection(ImGui::GetIO().DisplaySize);
   ImguiNvnBackend::renderDrawData(ImGui::GetDrawData());
 }
 

@@ -140,136 +140,135 @@ constexpr int key_mapping[][2] = {
 };
 
 constexpr char getKeyCode(ImGuiKey key, bool isAltCode, bool isNumLock) {
-  isAltCode = !isAltCode; // i dont want to rewrite this sorry
   switch (key) {
   case ImGuiKey_Space:
     return ' ';
   case ImGuiKey_0:
-    return isAltCode ? '0' : ')';
+    return isAltCode ? ')' : '0';
   case ImGuiKey_1:
-    return isAltCode ? '1' : '!';
+    return isAltCode ? '!' : '1';
   case ImGuiKey_2:
-    return isAltCode ? '2' : '@';
+    return isAltCode ? '@' : '2';
   case ImGuiKey_3:
-    return isAltCode ? '3' : '#';
+    return isAltCode ? '#' : '3';
   case ImGuiKey_4:
-    return isAltCode ? '4' : '$';
+    return isAltCode ? '$' : '4';
   case ImGuiKey_5:
-    return isAltCode ? '5' : '%';
+    return isAltCode ? '%' : '5';
   case ImGuiKey_6:
-    return isAltCode ? '6' : '^';
+    return isAltCode ? '^' : '6';
   case ImGuiKey_7:
-    return isAltCode ? '7' : '&';
+    return isAltCode ? '&' : '7';
   case ImGuiKey_8:
-    return isAltCode ? '8' : '*';
+    return isAltCode ? '*' : '8';
   case ImGuiKey_9:
-    return isAltCode ? '9' : '(';
+    return isAltCode ? '(' : '9';
   case ImGuiKey_Keypad0:
-    return isNumLock ? '0' : 0;
+    return isNumLock ? 0 : '0';
   case ImGuiKey_Keypad1:
-    return isNumLock ? '1' : 0;
+    return isNumLock ? 0 : '1';
   case ImGuiKey_Keypad2:
-    return isNumLock ? '2' : 0;
+    return isNumLock ? 0 : '2';
   case ImGuiKey_Keypad3:
-    return isNumLock ? '3' : 0;
+    return isNumLock ? 0 : '3';
   case ImGuiKey_Keypad4:
-    return isNumLock ? '4' : 0;
+    return isNumLock ? 0 : '4';
   case ImGuiKey_Keypad5:
-    return isNumLock ? '5' : 0;
+    return isNumLock ? 0 : '5';
   case ImGuiKey_Keypad6:
-    return isNumLock ? '6' : 0;
+    return isNumLock ? 0 : '6';
   case ImGuiKey_Keypad7:
-    return isNumLock ? '7' : 0;
+    return isNumLock ? 0 : '7';
   case ImGuiKey_Keypad8:
-    return isNumLock ? '8' : 0;
+    return isNumLock ? 0 : '8';
   case ImGuiKey_Keypad9:
-    return isNumLock ? '9' : 0;
+    return isNumLock ? 0 : '9';
   case ImGuiKey_KeypadDecimal:
-    return isNumLock ? '.' : 0;
+    return isNumLock ? 0 : '.';
   case ImGuiKey_KeypadDivide:
-    return isNumLock ? '/' : 0;
+    return isNumLock ? 0 : '/';
   case ImGuiKey_KeypadMultiply:
-    return isNumLock ? '*' : 0;
+    return isNumLock ? 0 : '*';
   case ImGuiKey_KeypadSubtract:
-    return isNumLock ? '-' : 0;
+    return isNumLock ? 0 : '-';
   case ImGuiKey_KeypadAdd:
-    return isNumLock ? '+' : 0;
+    return isNumLock ? 0 : '+';
   case ImGuiKey_KeypadEqual:
-    return isNumLock ? '=' : 0;
+    return isNumLock ? 0 : '=';
   case ImGuiKey_A:
-    return isAltCode ? 'a' : 'A';
+    return isAltCode ? 'A' : 'a';
   case ImGuiKey_B:
-    return isAltCode ? 'b' : 'B';
+    return isAltCode ? 'B' : 'b';
   case ImGuiKey_C:
-    return isAltCode ? 'c' : 'C';
+    return isAltCode ? 'C' : 'c';
   case ImGuiKey_D:
-    return isAltCode ? 'd' : 'D';
+    return isAltCode ? 'D' : 'd';
   case ImGuiKey_E:
-    return isAltCode ? 'e' : 'E';
+    return isAltCode ? 'E' : 'e';
   case ImGuiKey_F:
-    return isAltCode ? 'f' : 'F';
+    return isAltCode ? 'F' : 'f';
   case ImGuiKey_G:
-    return isAltCode ? 'g' : 'G';
+    return isAltCode ? 'G' : 'g';
   case ImGuiKey_H:
-    return isAltCode ? 'h' : 'H';
+    return isAltCode ? 'H' : 'h';
   case ImGuiKey_I:
-    return isAltCode ? 'i' : 'I';
+    return isAltCode ? 'I' : 'i';
   case ImGuiKey_J:
-    return isAltCode ? 'j' : 'J';
+    return isAltCode ? 'J' : 'j';
   case ImGuiKey_K:
-    return isAltCode ? 'k' : 'K';
+    return isAltCode ? 'K' : 'k';
   case ImGuiKey_L:
-    return isAltCode ? 'l' : 'L';
+    return isAltCode ? 'L' : 'l';
   case ImGuiKey_M:
-    return isAltCode ? 'm' : 'M';
+    return isAltCode ? 'M' : 'm';
   case ImGuiKey_N:
-    return isAltCode ? 'n' : 'N';
+    return isAltCode ? 'N' : 'n';
   case ImGuiKey_O:
-    return isAltCode ? 'o' : 'O';
+    return isAltCode ? 'O' : 'o';
   case ImGuiKey_P:
-    return isAltCode ? 'p' : 'P';
+    return isAltCode ? 'P' : 'p';
   case ImGuiKey_Q:
-    return isAltCode ? 'q' : 'Q';
+    return isAltCode ? 'Q' : 'q';
   case ImGuiKey_R:
-    return isAltCode ? 'r' : 'R';
+    return isAltCode ? 'R' : 'r';
   case ImGuiKey_S:
-    return isAltCode ? 's' : 'S';
+    return isAltCode ? 'S' : 's';
   case ImGuiKey_T:
-    return isAltCode ? 't' : 'T';
+    return isAltCode ? 'T' : 't';
   case ImGuiKey_U:
-    return isAltCode ? 'u' : 'U';
+    return isAltCode ? 'U' : 'u';
   case ImGuiKey_V:
-    return isAltCode ? 'v' : 'V';
+    return isAltCode ? 'V' : 'v';
   case ImGuiKey_W:
-    return isAltCode ? 'w' : 'W';
+    return isAltCode ? 'W' : 'w';
   case ImGuiKey_X:
-    return isAltCode ? 'x' : 'X';
+    return isAltCode ? 'X' : 'x';
   case ImGuiKey_Y:
-    return isAltCode ? 'y' : 'Y';
+    return isAltCode ? 'Y' : 'y';
   case ImGuiKey_Z:
-    return isAltCode ? 'z' : 'Z';
+    return isAltCode ? 'Z' : 'z';
   case ImGuiKey_Apostrophe:
-    return isAltCode ? '\'' : '"';
+    return isAltCode ? '"' : '\'';
   case ImGuiKey_Comma:
-    return isAltCode ? ',' : '<';
+    return isAltCode ? '<' : ',';
   case ImGuiKey_Minus:
-    return isAltCode ? '-' : '_';
+    return isAltCode ? '_' : '-';
   case ImGuiKey_Period:
-    return isAltCode ? '.' : '>';
+    return isAltCode ? '>' : '.';
   case ImGuiKey_Slash:
-    return isAltCode ? '/' : '?';
+    return isAltCode ? '?' : '/';
   case ImGuiKey_Semicolon:
-    return isAltCode ? ';' : ':';
+    return isAltCode ? ':' : ';';
   case ImGuiKey_Equal:
-    return isAltCode ? '=' : '+';
+    return isAltCode ? '+' : '=';
   case ImGuiKey_LeftBracket:
-    return isAltCode ? '[' : '{';
+    return isAltCode ? '{' : '[';
   case ImGuiKey_Backslash:
-    return isAltCode ? '\\' : '|';
+    return isAltCode ?  '|' : '\\';
   case ImGuiKey_RightBracket:
-    return isAltCode ? ']' : '}';
+    return isAltCode ? '}' : ']';
   case ImGuiKey_GraveAccent:
-    return isAltCode ? '`' : '~';
+    return isAltCode ? '~' : '`';
   default:
     return 0;
   }

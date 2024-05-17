@@ -42,9 +42,9 @@
 #define __page_size PAGE_SIZE
 #define __page_align(n) __align_up(static_cast<uintptr_t>(n), __page_size)
 #define __ptr_align(x) __ptr(__align_down(reinterpret_cast<uintptr_t>(x), __page_size))
-#define __align_up(x, n) (((x) + ((n)-1)) & ~((n)-1))
-#define __align_down(x, n) ((x) & -(n))
-#define __countof(x) static_cast<intptr_t>(sizeof(x) / sizeof((x)[0]))  // must be signed
+//#define __align_up(x, n) (((x) + ((n)-1)) & ~((n)-1))
+//#define __align_down(x, n) ((x) & -(n))
+//#define __countof(x) static_cast<intptr_t>(sizeof(x) / sizeof((x)[0]))  // must be signed
 #define __atomic_increase(p) __sync_add_and_fetch(p, 1)
 #define __sync_cmpswap(p, v, n) __sync_bool_compare_and_swap(p, v, n)
 
