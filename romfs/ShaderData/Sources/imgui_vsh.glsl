@@ -9,6 +9,7 @@ layout (location = 1) out vec4 vtxColor;
 
 layout (std140, binding = 0) uniform VertUBO {
     mat4 proj;
+    int isUseSrgb;
 } ubo;
 
 void main() {

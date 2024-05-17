@@ -15,6 +15,13 @@
 
 namespace ImguiNvnBackend {
 
+  typedef float Matrix44f[4][4];
+
+  struct ShaderUBO {
+    Matrix44f mMtx;
+    int isUseSrgb;
+  };
+
   static constexpr int MaxTexDescriptors = 256 + 100;
   static constexpr int MaxSampDescriptors = 256 + 100;
 
@@ -77,17 +84,11 @@ namespace ImguiNvnBackend {
     nn::TimeSpanType lastTick;
     bool isInitialized;
 
+    ShaderUBO mShaderUBO = {};
+
     bool isDisableInput = true;
 
     CompiledData imguiShaderBinary;
-
-    // test shader data
-
-    bool isUseTestShader = false;
-    nvn::Program testShader;
-    nvn::ShaderData testShaderDatas[2]; // 0 - Vert 1 - Frag
-    MemoryBuffer *testShaderBuffer;
-    CompiledData testShaderBinary;
   };
 
   bool createShaders();
@@ -101,6 +102,10 @@ namespace ImguiNvnBackend {
   void ShutdownBackend();
 
   void updateInput();
+
+  void updateProjection(ImVec2 dispSize);
+
+  void updateScale(bool isDocked);
 
   void newFrame();
 

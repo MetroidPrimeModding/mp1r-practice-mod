@@ -28,6 +28,9 @@ nn::hid::KeyboardState InputHelper::prevKeyboardState{};
 nn::hid::MouseState InputHelper::curMouseState{};
 nn::hid::MouseState InputHelper::prevMouseState{};
 
+nn::hid::TouchScreenState<1> InputHelper::curTouchState{};
+nn::hid::TouchScreenState<1> InputHelper::prevTouchState{};
+
 ulong InputHelper::selectedPort = -1;
 bool InputHelper::isReadInput = true;
 bool InputHelper::toggleInput = false;
@@ -72,6 +75,9 @@ void InputHelper::updatePadState() {
 
   prevMouseState = curMouseState;
   nn::hid::GetMouseState(&curMouseState);
+
+  prevTouchState = curTouchState;
+  nn::hid::GetTouchScreenState(&curTouchState);
 
 //  if (isHoldZR() && isHoldR() && isPressPadUp()) {
 //    toggleInput = !toggleInput;
@@ -129,6 +135,10 @@ bool InputHelper::isKeyRelease(nn::hid::KeyboardKey key) {
   return !curKeyboardState.keys.isBitSet(key) && prevKeyboardState.keys.isBitSet(key);
 }
 
+bool InputHelper::isModifierActive(nn::hid::KeyboardModifier modifier) {
+  return curKeyboardState.modifiers.isBitSet(modifier);
+}
+
 bool InputHelper::isMouseHold(nn::hid::MouseButton button) {
   return curMouseState.buttons.isBitSet(button);
 }
@@ -141,6 +151,10 @@ bool InputHelper::isMouseRelease(nn::hid::MouseButton button) {
   return !curMouseState.buttons.isBitSet(button) && prevMouseState.buttons.isBitSet(button);
 }
 
+bool InputHelper::isMouseConnected() {
+  return curMouseState.attributes.isBitSet(nn::hid::MouseAttribute::IsConnected);
+}
+
 void InputHelper::getMouseCoords(float *x, float *y) {
   *x = curMouseState.x;
   *y = curMouseState.y;
@@ -149,4 +163,25 @@ void InputHelper::getMouseCoords(float *x, float *y) {
 void InputHelper::getScrollDelta(float *x, float *y) {
   *x = curMouseState.wheelDeltaX;
   *y = curMouseState.wheelDeltaY;
+}
+
+bool InputHelper::getTouchCoords(s32 *x, s32 *y) {
+  if (curTouchState.count > 0) {
+    *x = curTouchState.touches[0].X;
+    *y = curTouchState.touches[0].Y;
+    return true;
+  }
+  return false;
+}
+
+bool InputHelper::isHoldTouch() {
+  return curTouchState.count > 0;
+}
+
+bool InputHelper::isPressTouch() {
+  return curTouchState.count > 0 && prevTouchState.count == 0;
+}
+
+bool InputHelper::isReleaseTouch() {
+  return curTouchState.count == 0 && prevTouchState.count > 0;
 }

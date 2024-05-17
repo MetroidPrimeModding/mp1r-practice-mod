@@ -138,3 +138,139 @@ constexpr int key_mapping[][2] = {
     {ImGuiKey_KeypadEnter,    static_cast<const int>(nn::hid::KeyboardKey::NumPadEnter)},
     {ImGuiKey_KeypadEqual,    static_cast<const int>(nn::hid::KeyboardKey::NumPadEquals)},
 };
+
+constexpr char getKeyCode(ImGuiKey key, bool isAltCode, bool isNumLock) {
+  isAltCode = !isAltCode; // i dont want to rewrite this sorry
+  switch (key) {
+  case ImGuiKey_Space:
+    return ' ';
+  case ImGuiKey_0:
+    return isAltCode ? '0' : ')';
+  case ImGuiKey_1:
+    return isAltCode ? '1' : '!';
+  case ImGuiKey_2:
+    return isAltCode ? '2' : '@';
+  case ImGuiKey_3:
+    return isAltCode ? '3' : '#';
+  case ImGuiKey_4:
+    return isAltCode ? '4' : '$';
+  case ImGuiKey_5:
+    return isAltCode ? '5' : '%';
+  case ImGuiKey_6:
+    return isAltCode ? '6' : '^';
+  case ImGuiKey_7:
+    return isAltCode ? '7' : '&';
+  case ImGuiKey_8:
+    return isAltCode ? '8' : '*';
+  case ImGuiKey_9:
+    return isAltCode ? '9' : '(';
+  case ImGuiKey_Keypad0:
+    return isNumLock ? '0' : 0;
+  case ImGuiKey_Keypad1:
+    return isNumLock ? '1' : 0;
+  case ImGuiKey_Keypad2:
+    return isNumLock ? '2' : 0;
+  case ImGuiKey_Keypad3:
+    return isNumLock ? '3' : 0;
+  case ImGuiKey_Keypad4:
+    return isNumLock ? '4' : 0;
+  case ImGuiKey_Keypad5:
+    return isNumLock ? '5' : 0;
+  case ImGuiKey_Keypad6:
+    return isNumLock ? '6' : 0;
+  case ImGuiKey_Keypad7:
+    return isNumLock ? '7' : 0;
+  case ImGuiKey_Keypad8:
+    return isNumLock ? '8' : 0;
+  case ImGuiKey_Keypad9:
+    return isNumLock ? '9' : 0;
+  case ImGuiKey_KeypadDecimal:
+    return isNumLock ? '.' : 0;
+  case ImGuiKey_KeypadDivide:
+    return isNumLock ? '/' : 0;
+  case ImGuiKey_KeypadMultiply:
+    return isNumLock ? '*' : 0;
+  case ImGuiKey_KeypadSubtract:
+    return isNumLock ? '-' : 0;
+  case ImGuiKey_KeypadAdd:
+    return isNumLock ? '+' : 0;
+  case ImGuiKey_KeypadEqual:
+    return isNumLock ? '=' : 0;
+  case ImGuiKey_A:
+    return isAltCode ? 'a' : 'A';
+  case ImGuiKey_B:
+    return isAltCode ? 'b' : 'B';
+  case ImGuiKey_C:
+    return isAltCode ? 'c' : 'C';
+  case ImGuiKey_D:
+    return isAltCode ? 'd' : 'D';
+  case ImGuiKey_E:
+    return isAltCode ? 'e' : 'E';
+  case ImGuiKey_F:
+    return isAltCode ? 'f' : 'F';
+  case ImGuiKey_G:
+    return isAltCode ? 'g' : 'G';
+  case ImGuiKey_H:
+    return isAltCode ? 'h' : 'H';
+  case ImGuiKey_I:
+    return isAltCode ? 'i' : 'I';
+  case ImGuiKey_J:
+    return isAltCode ? 'j' : 'J';
+  case ImGuiKey_K:
+    return isAltCode ? 'k' : 'K';
+  case ImGuiKey_L:
+    return isAltCode ? 'l' : 'L';
+  case ImGuiKey_M:
+    return isAltCode ? 'm' : 'M';
+  case ImGuiKey_N:
+    return isAltCode ? 'n' : 'N';
+  case ImGuiKey_O:
+    return isAltCode ? 'o' : 'O';
+  case ImGuiKey_P:
+    return isAltCode ? 'p' : 'P';
+  case ImGuiKey_Q:
+    return isAltCode ? 'q' : 'Q';
+  case ImGuiKey_R:
+    return isAltCode ? 'r' : 'R';
+  case ImGuiKey_S:
+    return isAltCode ? 's' : 'S';
+  case ImGuiKey_T:
+    return isAltCode ? 't' : 'T';
+  case ImGuiKey_U:
+    return isAltCode ? 'u' : 'U';
+  case ImGuiKey_V:
+    return isAltCode ? 'v' : 'V';
+  case ImGuiKey_W:
+    return isAltCode ? 'w' : 'W';
+  case ImGuiKey_X:
+    return isAltCode ? 'x' : 'X';
+  case ImGuiKey_Y:
+    return isAltCode ? 'y' : 'Y';
+  case ImGuiKey_Z:
+    return isAltCode ? 'z' : 'Z';
+  case ImGuiKey_Apostrophe:
+    return isAltCode ? '\'' : '"';
+  case ImGuiKey_Comma:
+    return isAltCode ? ',' : '<';
+  case ImGuiKey_Minus:
+    return isAltCode ? '-' : '_';
+  case ImGuiKey_Period:
+    return isAltCode ? '.' : '>';
+  case ImGuiKey_Slash:
+    return isAltCode ? '/' : '?';
+  case ImGuiKey_Semicolon:
+    return isAltCode ? ';' : ':';
+  case ImGuiKey_Equal:
+    return isAltCode ? '=' : '+';
+  case ImGuiKey_LeftBracket:
+    return isAltCode ? '[' : '{';
+  case ImGuiKey_Backslash:
+    return isAltCode ? '\\' : '|';
+  case ImGuiKey_RightBracket:
+    return isAltCode ? ']' : '}';
+  case ImGuiKey_GraveAccent:
+    return isAltCode ? '`' : '~';
+  default:
+    return 0;
+  }
+}
